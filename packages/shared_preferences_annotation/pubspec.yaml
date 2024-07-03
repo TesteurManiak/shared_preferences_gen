@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  source_gen: ^1.5.0
 
 dev_dependencies:
   flutter_lints: ^3.0.0

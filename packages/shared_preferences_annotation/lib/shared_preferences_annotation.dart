@@ -1,7 +1,3 @@
-class SharedPrefEntry {
-  const SharedPrefEntry({
-    required this.key,
-  });
+library shared_preferences_annotation;
 
-  final String key;
-}
+export 'src/shared_pref_entry.dart';
