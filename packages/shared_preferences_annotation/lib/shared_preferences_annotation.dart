@@ -1,7 +1,7 @@
-library shared_preferences_annotation;
+class SharedPrefEntry {
+  const SharedPrefEntry({
+    required this.key,
+  });
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
+  final String key;
 }

@@ -1,10 +1,10 @@
 name: shared_preferences_gen
-description: "A new Flutter package project."
+description: "Typesafe code generation for Flutter shared_preferences."
 version: 0.0.1
-homepage:
+homepage: https://github.com/TesteurManiak/shared_preferences_gen
 
 environment:
-  sdk: '>=3.4.1 <4.0.0'
+  sdk: ">=3.4.1 <4.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
