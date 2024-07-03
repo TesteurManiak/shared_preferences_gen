@@ -1,0 +1,22 @@
+name: shared_preferences_gen
+
+packages:
+  - packages/**
+
+ide:
+  intellij: false
+
+scripts:
+  test:
+    run: melos exec -- "flutter test"
+    description: Run `flutter test` for a specific package.
+    packageFilters:
+      dirExists:
+        - test
+
+  coverage:
+    run: melos exec -- "flutter test --coverage"
+    description: Run `flutter test --coverage` for a specific package.
+    packageFilters:
+      dirExists:
+        - test
