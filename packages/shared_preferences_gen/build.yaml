@@ -1,0 +1,7 @@
+builders:
+  shared_preferences_gen:
+    import: "package:shared_preferences_gen/shared_preferences_gen.dart"
+    builder_factories: ["sharedPreferencesGen"]
+    build_extensions: { ".dart": [".g.dart"] }
+    auto_apply: dependents
+    build_to: source
