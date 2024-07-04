@@ -5,14 +5,6 @@ import 'package:build/build.dart';
 import 'package:shared_preferences_annotation/shared_preferences_annotation.dart';
 import 'package:source_gen/source_gen.dart';
 
-// const _supportedSharedPrefTypes = <String, Type>{
-//   'bool': bool,
-//   'double': double,
-//   'int': int,
-//   'String': String,
-//   'List<String>': List<String>,
-// };
-
 const _annotations = <Type>{
   SharedPrefData,
 };
@@ -25,9 +17,9 @@ class SharedPreferencesGenerator extends Generator {
 
   @override
   Future<String> generate(LibraryReader library, BuildStep buildStep) async {
-    final getters = <String>{};
+    final getters = <_SharedPrefEntry>{};
 
-    generateForAnnotation(library, getters);
+    _generateForAnnotation(library, getters);
 
     if (getters.isEmpty) return '';
 
@@ -35,11 +27,15 @@ class SharedPreferencesGenerator extends Generator {
 
     return '''
 extension SharedPreferencesGenX on SharedPreferences {
+ ${getters.map((getter) => getter.create()).join('\n')}
 }
     ''';
   }
 
-  void generateForAnnotation(LibraryReader library, Set<String> getters) {
+  void _generateForAnnotation(
+    LibraryReader library,
+    Set<_SharedPrefEntry> getters,
+  ) {
     for (final annotatedElement in library.annotatedWith(_typeChecker)) {
       final generatedValue = _generateForAnnotatedElement(
         annotatedElement.element,
@@ -47,19 +43,128 @@ extension SharedPreferencesGenX on SharedPreferences {
       );
 
       // TODO: implement generateForAnnotation
-      getters.add(generatedValue);
+      for (final value in generatedValue) {
+        final added = getters.add(value);
+        if (!added) throw StateError('Duplicate key: ${value.key}');
+      }
     }
   }
 
-  String _generateForAnnotatedElement(
+  List<_SharedPrefEntry> _generateForAnnotatedElement(
     Element element,
     ConstantReader annotation,
   ) {
-    final typedAnnotation =
-        annotation.objectValue.type!.getDisplayString(withNullability: false);
-    // final type = typedAnnotation.substring(0, typedAnnotation.indexOf('<'));
+    final entries = annotation.peek('entries')?.listValue ?? [];
+    final sharedPrefEntries = <_SharedPrefEntry>[];
+
+    for (final entry in entries) {
+      final reader = ConstantReader(entry);
+
+      // Generic type check
+      final fullType =
+          reader.objectValue.type!.getDisplayString(withNullability: false);
+      final typeName =
+          fullType.substring(fullType.indexOf('<') + 1, fullType.indexOf('>'));
+      final type = _mapTypeNameToDartType(typeName);
+
+      // Properties
+      final key = reader.peek('key')!.stringValue;
+      final defaultValue = reader.peek('defaultValue')?.literalValue;
+
+      sharedPrefEntries.add(_SharedPrefEntry(
+        key: key,
+        defaultValue: defaultValue,
+        type: type,
+      ));
+    }
 
     // TODO: implement _generateForAnnotatedElement
-    return typedAnnotation;
+    return sharedPrefEntries;
+  }
+
+  Type _mapTypeNameToDartType(String typeName) {
+    switch (typeName) {
+      case 'int':
+        return int;
+      case 'double':
+        return double;
+      case 'String':
+        return String;
+      case 'bool':
+        return bool;
+      default:
+        throw StateError('Unknown type: $typeName');
+    }
+  }
+}
+
+class _SharedPrefEntry {
+  const _SharedPrefEntry({
+    required this.key,
+    required this.defaultValue,
+    required this.type,
+  });
+
+  final String key;
+  final Object? defaultValue;
+  final Type type;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is _SharedPrefEntry &&
+        other.key == key &&
+        other.defaultValue == defaultValue &&
+        other.type == type;
+  }
+
+  @override
+  int get hashCode => Object.hash(key, defaultValue, type);
+
+  String get dartType => type.toString();
+
+  String get sharedPrefGetter {
+    return switch (dartType) {
+      'String' => 'getString',
+      'int' => 'getInt',
+      'double' => 'getDouble',
+      'bool' => 'getBool',
+      _ => throw StateError('Unknown type: $type'),
+    };
+  }
+
+  String get sharedPrefSetter {
+    return switch (dartType) {
+      'String' => 'setString',
+      'int' => 'setInt',
+      'double' => 'setDouble',
+      'bool' => 'setBool',
+      _ => throw StateError('Unknown type: $type'),
+    };
+  }
+
+  String createGetter() {
+    final buffer =
+        StringBuffer('''$dartType? get $key => $sharedPrefGetter('$key')''');
+    if (defaultValue != null) {
+      buffer.write(' ?? $defaultValue');
+    }
+    buffer.write(';');
+    return buffer.toString();
+  }
+
+  String createSetter() {
+    return '''Future<void> set$key($dartType value) => $sharedPrefSetter('$key', value);''';
+  }
+
+  String createRemove() => '''Future<void> remove$key() => remove('$key');''';
+
+  String create() {
+    return '''
+    ${createGetter()}
+    ${createSetter()}
+    ${createRemove()}
+    ''';
   }
 }

@@ -9,11 +9,13 @@ part 'main.g.dart';
 ])
 Future<void> main() async {
   final prefs = await SharedPreferences.getInstance();
-  runApp(const MainApp());
+  runApp(MainApp(prefs));
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  const MainApp(this.prefs, {super.key});
+
+  final SharedPreferences prefs;
 
   @override
   Widget build(BuildContext context) {
