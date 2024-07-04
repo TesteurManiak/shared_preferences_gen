@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_annotation/shared_preferences_annotation.dart';
 
 part 'main.g.dart';
 
-void main() {
+@SharedPrefData([
+  SharedPrefEntry<String>(key: 'tmp'),
+])
+Future<void> main() async {
+  final prefs = await SharedPreferences.getInstance();
   runApp(const MainApp());
 }
 
@@ -21,6 +26,3 @@ class MainApp extends StatelessWidget {
     );
   }
 }
-
-@SharedPrefEntry<String>(key: 'tmp')
-class SharedPrefTmp {}

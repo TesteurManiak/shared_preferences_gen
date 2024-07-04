@@ -5,16 +5,16 @@ import 'package:build/build.dart';
 import 'package:shared_preferences_annotation/shared_preferences_annotation.dart';
 import 'package:source_gen/source_gen.dart';
 
-const _supportedSharedPrefTypes = <String, Type>{
-  'bool': bool,
-  'double': double,
-  'int': int,
-  'String': String,
-  'List<String>': List<String>,
-};
+// const _supportedSharedPrefTypes = <String, Type>{
+//   'bool': bool,
+//   'double': double,
+//   'int': int,
+//   'String': String,
+//   'List<String>': List<String>,
+// };
 
 const _annotations = <Type>{
-  SharedPrefEntry,
+  SharedPrefData,
 };
 
 class SharedPreferencesGenerator extends Generator {
@@ -32,10 +32,11 @@ class SharedPreferencesGenerator extends Generator {
     if (getters.isEmpty) return '';
 
     // TODO: implement generate
-    return [
-      for (final getter in getters)
-        'SharedPreferences get $getter => _sharedPreferences;',
-    ].join('\n\n');
+
+    return '''
+extension SharedPreferencesGenX on SharedPreferences {
+}
+    ''';
   }
 
   void generateForAnnotation(LibraryReader library, Set<String> getters) {
@@ -46,40 +47,19 @@ class SharedPreferencesGenerator extends Generator {
       );
 
       // TODO: implement generateForAnnotation
-      getters.add(generatedValue.toString());
+      getters.add(generatedValue);
     }
   }
 
-  Object _generateForAnnotatedElement(
+  String _generateForAnnotatedElement(
     Element element,
     ConstantReader annotation,
   ) {
     final typedAnnotation =
         annotation.objectValue.type!.getDisplayString(withNullability: false);
-    final type = typedAnnotation.substring(0, typedAnnotation.indexOf('<'));
-    final genericTypeString = typedAnnotation.substring(
-      typedAnnotation.indexOf('<') + 1,
-      typedAnnotation.indexOf('>'),
-    );
-    final genericType = _supportedSharedPrefTypes[genericTypeString];
-
-    if (genericType == null) {
-      throw _InvalidTypeSourceError(genericTypeString, element);
-    }
-
-    if (element is! ClassElement) {
-      throw InvalidGenerationSourceError(
-        'The @$type annotation can only be applied to classes.',
-        element: element,
-      );
-    }
+    // final type = typedAnnotation.substring(0, typedAnnotation.indexOf('<'));
 
     // TODO: implement _generateForAnnotatedElement
-    return annotation;
+    return typedAnnotation;
   }
-}
-
-class _InvalidTypeSourceError extends InvalidGenerationSourceError {
-  _InvalidTypeSourceError(String type, Element element)
-      : super('The type $type is not supported.', element: element);
 }

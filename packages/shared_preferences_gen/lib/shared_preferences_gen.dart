@@ -9,13 +9,8 @@ import 'package:source_gen/source_gen.dart';
 ///
 /// Not meant to be invoked by hand-authored code.
 Builder sharedPreferencesGen(BuilderOptions options) {
-  return PartBuilder(
+  return SharedPartBuilder(
     const <Generator>[SharedPreferencesGenerator()],
-    '.g.dart',
-    header: '''
-// coverage:ignore-file
-// GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file:  type=lint
-    ''',
+    'shared_preferences_gen',
   );
 }

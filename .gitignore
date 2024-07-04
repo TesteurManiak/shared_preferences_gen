@@ -9,3 +9,6 @@
 packages/**/pubspec.lock
 flutter_export_environment.sh
 coverage/
+packages/shared_preferences_annotation/.flutter-plugins
+
+packages/shared_preferences_annotation/.flutter-plugins-dependencies
