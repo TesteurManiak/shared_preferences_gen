@@ -120,7 +120,7 @@ class _SharedPrefEntry {
   }
 
   @override
-  int get hashCode => Object.hash(key, defaultValue, type);
+  int get hashCode => Object.hash(runtimeType, key, defaultValue, type);
 
   String get dartType => type.toString();
 
