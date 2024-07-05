@@ -4,6 +4,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:shared_preferences_annotation/shared_preferences_annotation.dart';
+import 'package:shared_preferences_gen/src/exceptions/exceptions.dart';
 import 'package:source_gen/source_gen.dart';
 
 const _annotations = <Type>{
@@ -50,7 +51,7 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       for (final value in generatedValue) {
         getters.add(value.build());
         final added = keys.add(value.key);
-        if (!added) throw StateError('Duplicate key: ${value.key}');
+        if (!added) throw DuplicateKeyException(value.key);
       }
     }
   }
@@ -67,7 +68,9 @@ extension \$SharedPreferencesGenX on SharedPreferences {
 
       // Generic type check
       final dartType = reader.objectValue.type;
-      if (dartType is! ParameterizedType) continue;
+      if (dartType is! ParameterizedType) {
+        throw const NoGenericTypeException();
+      }
 
       final genericType = dartType.typeArguments.first;
       final typeName = genericType.getDisplayString(withNullability: false);
@@ -91,7 +94,6 @@ extension \$SharedPreferencesGenX on SharedPreferences {
   }
 }
 
-/// Used to generate the getter methods for the shared preferences.
 class _GetterBuilder {
   const _GetterBuilder({
     required this.key,
