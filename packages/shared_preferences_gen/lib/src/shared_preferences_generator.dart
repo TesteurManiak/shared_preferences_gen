@@ -63,8 +63,7 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       // Generic type check
       final fullType =
           reader.objectValue.type!.getDisplayString(withNullability: false);
-      final typeName =
-          fullType.substring(fullType.indexOf('<') + 1, fullType.indexOf('>'));
+      final typeName = _extractGenericType(fullType);
       final type = _mapTypeNameToDartType(typeName);
 
       // Properties
@@ -80,6 +79,15 @@ extension \$SharedPreferencesGenX on SharedPreferences {
 
     // TODO: implement _generateForAnnotatedElement
     return sharedPrefEntries;
+  }
+
+  String _extractGenericType(String fullType) {
+    final regex = RegExp(r'<(.+)>');
+    final match = regex.firstMatch(fullType);
+    if (match != null && match.groupCount > 0) {
+      return match.group(1)!;
+    }
+    throw StateError('No generic type found in $fullType');
   }
 
   Type _mapTypeNameToDartType(String typeName) {
