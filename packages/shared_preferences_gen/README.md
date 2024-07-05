@@ -9,8 +9,71 @@ Typesafe code generation for Flutter shared_preferences.
 Make sure to add these packages to the project dependencies:
 
 ```sh
-flutter pub add --dev build_runner, shared_preferences_gen
+flutter pub add --dev build_runner
+flutter pub add --dev shared_preferences_gen
 flutter pub add shared_preferences_annotation
+```
+
+## Add imports and part directive
+
+Make sure to specify the correct file name in a part directive. In the example below, replace "name" with the file name.
+
+```dart
+import 'package:shared_preferences_annotation/shared_preferences_annotation.dart';
+
+part 'name.g.dart';
+```
+
+## Run the code generator
+
+To run the code generator, run the following commands:
+
+```sh
+dart run build_runner build --delete-conflicting-outputs
+```
+
+## Create a shared preferences entry
+
+To create a shared preferences entry, first create an annotation `@SharedPrefData` in the file where you want to store your instance of `SharedPreferences`. Then add a `SharedPrefEntry` with its corresponding type, key and default value (optional).
+
+```dart
+@SharedPrefData([
+  SharedPrefEntry<String>(key: 'myKey'),
+  SharedPrefEntry<bool>(key: 'darkMode', defaultValue: false),
+])
+void main() {
+    // ...
+}
+```
+
+## Read an entry
+
+You can access the generated entries directly from your instance of `SharedPreferences`.
+
+```dart
+final prefs = await SharedPreferences.getInstance();
+String myKey = prefs.myKey.value;
+bool darkMode = prefs.darkMode.value;
+```
+
+## Write an entry
+
+You can write to the generated entries directly from your instance of `SharedPreferences`.
+
+```dart
+final prefs = await SharedPreferences.getInstance();
+await prefs.myKey.setValue('newValue');
+await prefs.darkMode.setValue(true);
+```
+
+## Remove an entry
+
+You can remove the generated entries directly from your instance of `SharedPreferences`.
+
+```dart
+final prefs = await SharedPreferences.getInstance();
+await prefs.myKey.remove();
+await prefs.darkMode.remove();
 ```
 
 ## TODO
