@@ -58,22 +58,16 @@ bool darkMode = prefs.darkMode.value;
 
 ## Write an entry
 
-You can write to the generated entries directly from your instance of `SharedPreferences`.
-
 ```dart
 final prefs = await SharedPreferences.getInstance();
 await prefs.myKey.setValue('newValue');
-await prefs.darkMode.setValue(true);
 ```
 
 ## Remove an entry
 
-You can remove the generated entries directly from your instance of `SharedPreferences`.
-
 ```dart
 final prefs = await SharedPreferences.getInstance();
 await prefs.myKey.remove();
-await prefs.darkMode.remove();
 ```
 
 ## TODO
