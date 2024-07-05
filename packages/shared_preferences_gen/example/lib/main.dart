@@ -5,7 +5,9 @@ import 'package:shared_preferences_annotation/shared_preferences_annotation.dart
 part 'main.g.dart';
 
 @SharedPrefData([
-  SharedPrefEntry<String>(key: 'tmp'),
+  SharedPrefEntry<String>(key: 'title'),
+  SharedPrefEntry<bool>(key: 'darkMode', defaultValue: false),
+  SharedPrefEntry<int>(key: 'numberOfVisits', defaultValue: 0),
 ])
 Future<void> main() async {
   final prefs = await SharedPreferences.getInstance();

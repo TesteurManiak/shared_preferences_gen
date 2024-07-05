@@ -26,7 +26,7 @@ class SharedPreferencesGenerator extends Generator {
     // TODO: implement generate
 
     return '''
-extension SharedPreferencesGenX on SharedPreferences {
+extension \$SharedPreferencesGenX on SharedPreferences {
  ${getters.map((getter) => getter.create()).join('\n')}
 }
     ''';
@@ -144,27 +144,15 @@ class _SharedPrefEntry {
     };
   }
 
-  String createGetter() {
-    final buffer =
-        StringBuffer('''$dartType? get $key => $sharedPrefGetter('$key')''');
-    if (defaultValue != null) {
-      buffer.write(' ?? $defaultValue');
-    }
-    buffer.write(';');
-    return buffer.toString();
-  }
-
-  String createSetter() {
-    return '''Future<void> set$key($dartType value) => $sharedPrefSetter('$key', value);''';
-  }
-
-  String createRemove() => '''Future<void> remove$key() => remove('$key');''';
-
   String create() {
     return '''
-    ${createGetter()}
-    ${createSetter()}
-    ${createRemove()}
+    SharedPrefValue<$dartType> get $key => SharedPrefValue<$dartType>(
+      key: '$key',
+      getter: $sharedPrefGetter,
+      setter: $sharedPrefSetter,
+      remover: remove,
+      ${defaultValue != null ? 'defaultValue: $defaultValue,' : ''}
+    );
     ''';
   }
 }
