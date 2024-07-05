@@ -93,19 +93,6 @@ class _SharedPrefEntry {
   final Object? defaultValue;
   final String typeName;
 
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is _SharedPrefEntry &&
-        other.key == key &&
-        other.defaultValue == defaultValue &&
-        other.typeName == typeName;
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, key, defaultValue, typeName);
-
   ({String getter, String setter}) get sharedPrefMethods {
     return switch (typeName) {
       'String' => (getter: 'getString', setter: 'setString'),
