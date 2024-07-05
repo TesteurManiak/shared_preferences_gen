@@ -64,7 +64,6 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       final fullType =
           reader.objectValue.type!.getDisplayString(withNullability: false);
       final typeName = _extractGenericType(fullType);
-      final type = _mapTypeNameToDartType(typeName);
 
       // Properties
       final key = reader.peek('key')!.stringValue;
@@ -73,7 +72,7 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       sharedPrefEntries.add(_SharedPrefEntry(
         key: key,
         defaultValue: defaultValue,
-        type: type,
+        type: typeName,
       ));
     }
 
@@ -89,21 +88,6 @@ extension \$SharedPreferencesGenX on SharedPreferences {
     }
     throw StateError('No generic type found in $fullType');
   }
-
-  Type _mapTypeNameToDartType(String typeName) {
-    switch (typeName) {
-      case 'int':
-        return int;
-      case 'double':
-        return double;
-      case 'String':
-        return String;
-      case 'bool':
-        return bool;
-      default:
-        throw StateError('Unknown type: $typeName');
-    }
-  }
 }
 
 class _SharedPrefEntry {
@@ -115,7 +99,7 @@ class _SharedPrefEntry {
 
   final String key;
   final Object? defaultValue;
-  final Type type;
+  final String type;
 
   @override
   bool operator ==(Object other) {
@@ -130,10 +114,8 @@ class _SharedPrefEntry {
   @override
   int get hashCode => Object.hash(runtimeType, key, defaultValue, type);
 
-  String get dartType => type.toString();
-
   String get sharedPrefGetter {
-    return switch (dartType) {
+    return switch (type) {
       'String' => 'getString',
       'int' => 'getInt',
       'double' => 'getDouble',
@@ -143,7 +125,7 @@ class _SharedPrefEntry {
   }
 
   String get sharedPrefSetter {
-    return switch (dartType) {
+    return switch (type) {
       'String' => 'setString',
       'int' => 'setInt',
       'double' => 'setDouble',
@@ -154,7 +136,7 @@ class _SharedPrefEntry {
 
   String create() {
     return '''
-    SharedPrefValue<$dartType> get $key => SharedPrefValue<$dartType>(
+    SharedPrefValue<$type> get $key => SharedPrefValue<$type>(
       key: '$key',
       getter: $sharedPrefGetter,
       setter: $sharedPrefSetter,
