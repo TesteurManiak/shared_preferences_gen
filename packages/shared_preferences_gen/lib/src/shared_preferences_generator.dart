@@ -69,13 +69,17 @@ extension \$SharedPreferencesGenX on SharedPreferences {
 
       // Properties
       final key = reader.peek('key')!.stringValue;
+      final accessor = reader.peek('accessor')?.stringValue;
       final defaultValue = reader.peek('defaultValue')?.literalValue;
 
-      sharedPrefEntries.add(_SharedPrefEntry(
-        key: key,
-        defaultValue: defaultValue,
-        typeName: typeName,
-      ));
+      sharedPrefEntries.add(
+        _SharedPrefEntry(
+          key: key,
+          accessor: accessor,
+          defaultValue: defaultValue,
+          typeName: typeName,
+        ),
+      );
     }
 
     return sharedPrefEntries;
@@ -85,11 +89,13 @@ extension \$SharedPreferencesGenX on SharedPreferences {
 class _SharedPrefEntry {
   const _SharedPrefEntry({
     required this.key,
+    required String? accessor,
     required this.defaultValue,
     required this.typeName,
-  });
+  }) : accessor = accessor ?? key;
 
   final String key;
+  final String accessor;
   final Object? defaultValue;
   final String typeName;
 
@@ -107,7 +113,7 @@ class _SharedPrefEntry {
   String create() {
     final (:getter, :setter) = sharedPrefMethods;
     return '''
-    SharedPrefValue<$typeName> get $key => SharedPrefValue<$typeName>(
+    SharedPrefValue<$typeName> get $accessor => SharedPrefValue<$typeName>(
       key: '$key',
       getter: $getter,
       setter: $setter,
