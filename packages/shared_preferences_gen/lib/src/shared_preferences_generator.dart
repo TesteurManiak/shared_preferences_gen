@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:shared_preferences_annotation/shared_preferences_annotation.dart';
 import 'package:source_gen/source_gen.dart';
@@ -60,9 +61,11 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       final reader = ConstantReader(entry);
 
       // Generic type check
-      final fullType =
-          reader.objectValue.type!.getDisplayString(withNullability: false);
-      final typeName = _extractGenericType(fullType);
+      final dartType = reader.objectValue.type;
+      if (dartType is! ParameterizedType) continue;
+
+      final genericType = dartType.typeArguments.first;
+      final typeName = genericType.getDisplayString(withNullability: false);
 
       // Properties
       final key = reader.peek('key')!.stringValue;
@@ -76,15 +79,6 @@ extension \$SharedPreferencesGenX on SharedPreferences {
     }
 
     return sharedPrefEntries;
-  }
-
-  String _extractGenericType(String fullType) {
-    final regex = RegExp(r'<(.+)>');
-    final match = regex.firstMatch(fullType);
-    if (match != null && match.groupCount > 0) {
-      return match.group(1)!;
-    }
-    throw StateError('No generic type found in $fullType');
   }
 }
 
