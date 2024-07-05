@@ -22,4 +22,7 @@ class SharedPrefValue<T extends Object> {
   T? get value => _getter(key) ?? defaultValue;
   Future<bool> setValue(T value) => _setter(key, value);
   Future<bool> remove() => _remover(key);
+
+  @override
+  String toString() => value.toString();
 }

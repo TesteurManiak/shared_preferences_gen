@@ -9,6 +9,7 @@ import 'package:source_gen/source_gen.dart';
 
 const _annotations = <Type>{
   SharedPrefData,
+  CustomEntry,
 };
 
 class SharedPreferencesGenerator extends Generator {
@@ -72,8 +73,16 @@ extension \$SharedPreferencesGenX on SharedPreferences {
         throw const NoGenericTypeException();
       }
 
-      final genericType = dartType.typeArguments.first;
-      final typeName = genericType.getDisplayString(withNullability: false);
+      final (:outputType, :inputType) = switch (dartType.typeArguments) {
+        [final outputType] => (outputType: outputType, inputType: outputType),
+        [final outputType, final inputType] ||
+        [final outputType, final inputType, ...] =>
+          (outputType: outputType, inputType: inputType),
+        _ => throw const NoGenericTypeException(),
+      };
+
+      final outputName = outputType.getDisplayString(withNullability: false);
+      final inputName = inputType.getDisplayString(withNullability: false);
 
       // Properties
       final key = reader.peek('key')!.stringValue;
@@ -85,7 +94,8 @@ extension \$SharedPreferencesGenX on SharedPreferences {
           key: key,
           accessor: accessor,
           defaultValue: defaultValue,
-          typeName: typeName,
+          inputType: inputName,
+          outputType: outputName,
         ),
       );
     }
@@ -99,35 +109,40 @@ class _GetterBuilder {
     required this.key,
     required String? accessor,
     required this.defaultValue,
-    required this.typeName,
+    required this.inputType,
+    required this.outputType,
   }) : accessor = accessor ?? key;
 
   final String key;
   final String accessor;
   final Object? defaultValue;
-  final String typeName;
+  final String inputType;
+  final String outputType;
 
   ({String getter, String setter}) get sharedPrefMethods {
-    return switch (typeName) {
+    return switch (inputType) {
       'String' => (getter: 'getString', setter: 'setString'),
       'int' => (getter: 'getInt', setter: 'setInt'),
       'double' => (getter: 'getDouble', setter: 'setDouble'),
       'bool' => (getter: 'getBool', setter: 'setBool'),
       'List<String>' => (getter: 'getStringList', setter: 'setStringList'),
-      _ => throw StateError('Unsupported type: $typeName'),
+      _ => throw StateError('Unsupported type: $inputType'),
     };
   }
 
   String build() {
     final (:getter, :setter) = sharedPrefMethods;
     return '''
-    SharedPrefValue<$typeName> get $accessor => SharedPrefValue<$typeName>(
-      key: '$key',
-      getter: $getter,
-      setter: $setter,
-      remover: remove,
-      ${defaultValue != null ? 'defaultValue: $defaultValue,' : ''}
-    );
+    SharedPrefValue<$outputType> get $accessor {
+      final adapter = SharedPrefData.getAdapter<$outputType, $inputType>();
+      return SharedPrefValue<$outputType>(
+        key: '$key',
+        getter: (key) => adapter.fromSharedPrefs($getter(key)),
+        setter: (key, value) => $setter(key, adapter.toSharedPrefs(value)),
+        remover: remove,
+        ${defaultValue != null ? 'defaultValue: $defaultValue,' : ''}
+      );
+    }
     ''';
   }
 }

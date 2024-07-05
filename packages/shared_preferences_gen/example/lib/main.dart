@@ -9,9 +9,11 @@ part 'main.g.dart';
   SharedPrefEntry<bool>(key: 'darkMode', defaultValue: false),
   SharedPrefEntry<int>(key: 'numberOfVisits', defaultValue: 0),
   SharedPrefEntry<List<String>>(key: 'history', defaultValue: []),
+  CustomEntry<DateTime, int>(key: 'lastVisit'),
 ])
 Future<void> main() async {
   final prefs = await SharedPreferences.getInstance();
+
   runApp(MainApp(prefs));
 }
 
@@ -22,11 +24,43 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+    return MaterialApp(
+      home: Home(prefs),
+    );
+  }
+}
+
+class Home extends StatefulWidget {
+  const Home(this.prefs, {super.key});
+
+  final SharedPreferences prefs;
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    super.initState();
+
+    debugPrint('''
+  SharedPreferences data:
+  * title: ${widget.prefs.title}
+  * darkMode: ${widget.prefs.darkMode}
+  * numberOfVisits: ${widget.prefs.numberOfVisits}
+  * history: ${widget.prefs.history}
+  * lastVisit: ${widget.prefs.lastVisit}
+  ''');
+
+    widget.prefs.lastVisit.setValue(DateTime.now());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Text('Hello World!'),
       ),
     );
   }

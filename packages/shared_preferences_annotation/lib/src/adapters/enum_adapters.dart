@@ -12,7 +12,10 @@ class EnumIndexAdapter<T extends Enum> extends TypeAdapter<T, int> {
   final List<T> values;
 
   @override
-  T fromSharedPrefs(int value) => values[value];
+  T? fromSharedPrefs(int? value) {
+    if (value == null) return null;
+    return values[value];
+  }
 
   @override
   int toSharedPrefs(T value) => value.index;
