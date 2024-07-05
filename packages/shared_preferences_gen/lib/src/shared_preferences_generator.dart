@@ -118,7 +118,8 @@ class _SharedPrefEntry {
       'int' => (getter: 'getInt', setter: 'setInt'),
       'double' => (getter: 'getDouble', setter: 'setDouble'),
       'bool' => (getter: 'getBool', setter: 'setBool'),
-      _ => throw StateError('Unknown type: $typeName'),
+      'List<String>' => (getter: 'getStringList', setter: 'setStringList'),
+      _ => throw StateError('Unsupported type: $typeName'),
     };
   }
 

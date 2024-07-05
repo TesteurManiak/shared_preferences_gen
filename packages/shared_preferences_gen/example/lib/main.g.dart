@@ -29,4 +29,12 @@ extension $SharedPreferencesGenX on SharedPreferences {
         remover: remove,
         defaultValue: 0,
       );
+
+  SharedPrefValue<List<String>> get history => SharedPrefValue<List<String>>(
+        key: 'history',
+        getter: getStringList,
+        setter: setStringList,
+        remover: remove,
+        defaultValue: [],
+      );
 }
