@@ -18,22 +18,27 @@ class SharedPreferencesGenerator extends Generator {
 
   @override
   Future<String> generate(LibraryReader library, BuildStep buildStep) async {
-    final getters = <_SharedPrefEntry>{};
+    final getters = <String>{};
+    final adapters = <String>{};
 
-    _generateForAnnotation(library, getters);
+    _generateForAnnotation(library, getters, adapters);
 
     if (getters.isEmpty) return '';
 
-    return '''
+    return [
+      '''
 extension \$SharedPreferencesGenX on SharedPreferences {
- ${getters.map((getter) => getter.create()).join('\n')}
+ ${getters.map((getter) => getter).join('\n')}
 }
-    ''';
+    ''',
+      ...adapters,
+    ].join('\n\n');
   }
 
   void _generateForAnnotation(
     LibraryReader library,
-    Set<_SharedPrefEntry> getters,
+    Set<String> getters,
+    Set<String> adapters,
   ) {
     final keys = <String>{};
     for (final annotatedElement in library.annotatedWith(_typeChecker)) {
@@ -43,19 +48,19 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       );
 
       for (final value in generatedValue) {
-        getters.add(value);
+        getters.add(value.build());
         final added = keys.add(value.key);
         if (!added) throw StateError('Duplicate key: ${value.key}');
       }
     }
   }
 
-  List<_SharedPrefEntry> _generateForAnnotatedElement(
+  List<_GetterBuilder> _generateForAnnotatedElement(
     Element element,
     ConstantReader annotation,
   ) {
     final entries = annotation.peek('entries')?.listValue ?? [];
-    final sharedPrefEntries = <_SharedPrefEntry>[];
+    final sharedPrefEntries = <_GetterBuilder>[];
 
     for (final entry in entries) {
       final reader = ConstantReader(entry);
@@ -73,7 +78,7 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       final defaultValue = reader.peek('defaultValue')?.literalValue;
 
       sharedPrefEntries.add(
-        _SharedPrefEntry(
+        _GetterBuilder(
           key: key,
           accessor: accessor,
           defaultValue: defaultValue,
@@ -86,8 +91,9 @@ extension \$SharedPreferencesGenX on SharedPreferences {
   }
 }
 
-class _SharedPrefEntry {
-  const _SharedPrefEntry({
+/// Used to generate the getter methods for the shared preferences.
+class _GetterBuilder {
+  const _GetterBuilder({
     required this.key,
     required String? accessor,
     required this.defaultValue,
@@ -110,7 +116,7 @@ class _SharedPrefEntry {
     };
   }
 
-  String create() {
+  String build() {
     final (:getter, :setter) = sharedPrefMethods;
     return '''
     SharedPrefValue<$typeName> get $accessor => SharedPrefValue<$typeName>(
