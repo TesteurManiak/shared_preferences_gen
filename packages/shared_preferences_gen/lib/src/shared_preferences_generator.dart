@@ -23,8 +23,6 @@ class SharedPreferencesGenerator extends Generator {
 
     if (getters.isEmpty) return '';
 
-    // TODO: implement generate
-
     return '''
 extension \$SharedPreferencesGenX on SharedPreferences {
  ${getters.map((getter) => getter.create()).join('\n')}
@@ -36,15 +34,16 @@ extension \$SharedPreferencesGenX on SharedPreferences {
     LibraryReader library,
     Set<_SharedPrefEntry> getters,
   ) {
+    final keys = <String>{};
     for (final annotatedElement in library.annotatedWith(_typeChecker)) {
       final generatedValue = _generateForAnnotatedElement(
         annotatedElement.element,
         annotatedElement.annotation,
       );
 
-      // TODO: implement generateForAnnotation
       for (final value in generatedValue) {
-        final added = getters.add(value);
+        getters.add(value);
+        final added = keys.add(value.key);
         if (!added) throw StateError('Duplicate key: ${value.key}');
       }
     }
@@ -72,11 +71,10 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       sharedPrefEntries.add(_SharedPrefEntry(
         key: key,
         defaultValue: defaultValue,
-        type: typeName,
+        typeName: typeName,
       ));
     }
 
-    // TODO: implement _generateForAnnotatedElement
     return sharedPrefEntries;
   }
 
@@ -94,12 +92,12 @@ class _SharedPrefEntry {
   const _SharedPrefEntry({
     required this.key,
     required this.defaultValue,
-    required this.type,
+    required this.typeName,
   });
 
   final String key;
   final Object? defaultValue;
-  final String type;
+  final String typeName;
 
   @override
   bool operator ==(Object other) {
@@ -108,38 +106,29 @@ class _SharedPrefEntry {
     return other is _SharedPrefEntry &&
         other.key == key &&
         other.defaultValue == defaultValue &&
-        other.type == type;
+        other.typeName == typeName;
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, key, defaultValue, type);
+  int get hashCode => Object.hash(runtimeType, key, defaultValue, typeName);
 
-  String get sharedPrefGetter {
-    return switch (type) {
-      'String' => 'getString',
-      'int' => 'getInt',
-      'double' => 'getDouble',
-      'bool' => 'getBool',
-      _ => throw StateError('Unknown type: $type'),
-    };
-  }
-
-  String get sharedPrefSetter {
-    return switch (type) {
-      'String' => 'setString',
-      'int' => 'setInt',
-      'double' => 'setDouble',
-      'bool' => 'setBool',
-      _ => throw StateError('Unknown type: $type'),
+  ({String getter, String setter}) get sharedPrefMethods {
+    return switch (typeName) {
+      'String' => (getter: 'getString', setter: 'setString'),
+      'int' => (getter: 'getInt', setter: 'setInt'),
+      'double' => (getter: 'getDouble', setter: 'setDouble'),
+      'bool' => (getter: 'getBool', setter: 'setBool'),
+      _ => throw StateError('Unknown type: $typeName'),
     };
   }
 
   String create() {
+    final (:getter, :setter) = sharedPrefMethods;
     return '''
-    SharedPrefValue<$type> get $key => SharedPrefValue<$type>(
+    SharedPrefValue<$typeName> get $key => SharedPrefValue<$typeName>(
       key: '$key',
-      getter: $sharedPrefGetter,
-      setter: $sharedPrefSetter,
+      getter: $getter,
+      setter: $setter,
       remover: remove,
       ${defaultValue != null ? 'defaultValue: $defaultValue,' : ''}
     );

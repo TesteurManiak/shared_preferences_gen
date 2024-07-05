@@ -15,6 +15,7 @@ flutter pub add shared_preferences_annotation
 
 ## TODO
 
+* Support for `List<String>`
 * Support for `DateTime`
 * Support for `Enum`s
 * Support for custom types
