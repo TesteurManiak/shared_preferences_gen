@@ -2,11 +2,35 @@
 
 Typesafe code generation for Flutter shared_preferences.
 
+## Features
+
+* Check for duplicate keys
+* Type-safe accessors for shared preferences
+* Support for `DateTime` and `Enum` (coming soon)
+
 # How to use
 
 ## Install
 
-Make sure to add these packages to the project dependencies:
+**This package is not yet published. Use git dependencies if you want to try it.**
+
+```yaml
+dependencies
+  shared_preferences_annotation:
+    git:
+      url: https://github.com/TesteurManiak/shared_preferences_gen.git
+      ref: main
+      path: packages/shared_preferences_annotation
+
+dev_dependencies:
+  shared_preferences_gen:
+    git:
+      url: https://github.com/TesteurManiak/shared_preferences_gen.git
+      ref: main
+      path: packages/shared_preferences_gen
+```
+
+~~Make sure to add these packages to the project dependencies:~~
 
 ```sh
 flutter pub add --dev build_runner
