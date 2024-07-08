@@ -85,7 +85,10 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       // Properties
       final key = reader.peek('key')!.stringValue;
       final accessor = reader.peek('accessor')?.stringValue;
-      final defaultValue = reader.peek('defaultValue')?.literalValue;
+
+      // Get the default value from the element in the "defaultValue" field.
+      final defaultValue = _parseValue(reader.peek('defaultValue'));
+
       final adapter = reader
           .peek('adapter')
           ?.objectValue
@@ -131,6 +134,40 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       _ => throw NoGenericTypeException(typeName),
     };
   }
+
+  String? _parseValue(ConstantReader? reader) {
+    if (reader == null || reader.isNull) return null;
+
+    final value = switch (reader) {
+      _ when reader.isString => '"${reader.stringValue}"',
+      _ when reader.isInt => reader.intValue,
+      _ when reader.isDouble => reader.doubleValue,
+      _ when reader.isBool => reader.boolValue,
+      _ when reader.isList =>
+        reader.listValue.map((e) => _parseValue(ConstantReader(e))).toList(),
+      _ when reader.isSet =>
+        reader.setValue.map((e) => _parseValue(ConstantReader(e))).toSet(),
+      _ when reader.isMap => reader.mapValue.map((k, v) {
+          return MapEntry(
+              _parseValue(ConstantReader(k)), _parseValue(ConstantReader(v)));
+        }),
+      _ => null,
+    };
+
+    return _encodeToString(value);
+  }
+
+  String? _encodeToString(Object? value) {
+    return switch (value) {
+      null => null,
+      String() => value,
+      List() => "[${value.map((e) => _encodeToString(e)).join(', ')}]",
+      Set() => "{${value.map((e) => _encodeToString(e)).join(', ')}}",
+      Map() =>
+        "{${value.entries.map((e) => '${_encodeToString(e.key)}: ${_encodeToString(e.value)}').join(', ')}}",
+      _ => value.toString(),
+    };
+  }
 }
 
 class _GetterBuilder {
@@ -146,7 +183,7 @@ class _GetterBuilder {
   final String key;
   final String accessor;
   final String? adapter;
-  final Object? defaultValue;
+  final String? defaultValue;
   final String inputType;
   final String outputType;
 

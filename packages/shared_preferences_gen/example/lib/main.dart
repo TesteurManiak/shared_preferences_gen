@@ -5,12 +5,12 @@ import 'package:shared_preferences_annotation/shared_preferences_annotation.dart
 part 'main.g.dart';
 
 @SharedPrefData(entries: [
-  SharedPrefEntry<String>(key: 'title'),
+  SharedPrefEntry<String>(key: 'title', defaultValue: 'Hello, World!'),
   SharedPrefEntry<bool>(key: 'darkMode', defaultValue: false),
   SharedPrefEntry<int>(key: 'numberOfVisits', defaultValue: 0),
-  SharedPrefEntry<List<String>>(key: 'history', defaultValue: []),
+  SharedPrefEntry<List<String>>(key: 'history', defaultValue: ['0', '1']),
   DateTimeEntry(key: 'lastVisit'),
-  MapEntry(key: 'myMap', defaultValue: {}),
+  MapEntry(key: 'myMap', defaultValue: {'1': 'tmp', '2': 2}),
 ])
 Future<void> main() async {
   final prefs = await SharedPreferences.getInstance();

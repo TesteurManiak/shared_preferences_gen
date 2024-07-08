@@ -16,6 +16,7 @@ extension $SharedPreferencesGenX on SharedPreferences {
       getter: getString,
       setter: setString,
       remover: remove,
+      defaultValue: "Hello, World!",
     );
   }
 
@@ -45,7 +46,7 @@ extension $SharedPreferencesGenX on SharedPreferences {
       getter: getStringList,
       setter: setStringList,
       remover: remove,
-      defaultValue: [],
+      defaultValue: ["0", "1"],
     );
   }
 
@@ -66,7 +67,7 @@ extension $SharedPreferencesGenX on SharedPreferences {
       getter: (k) => adapter.fromSharedPrefs(getString(k)),
       setter: (k, v) => setString(k, adapter.toSharedPrefs(v)),
       remover: remove,
-      defaultValue: {},
+      defaultValue: {"1": "tmp", "2": 2},
     );
   }
 }
