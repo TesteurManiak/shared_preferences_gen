@@ -8,7 +8,7 @@ part of 'main.dart';
 
 extension $SharedPreferencesGenX on SharedPreferences {
   Set<SharedPrefValue> get entries =>
-      {title, darkMode, numberOfVisits, history, lastVisit, myMap, themeMode};
+      {title, darkMode, numberOfVisits, history, lastVisit, themeMode};
 
   SharedPrefValue<String> get title {
     return SharedPrefValue<String>(
@@ -57,23 +57,6 @@ extension $SharedPreferencesGenX on SharedPreferences {
       getter: (k) => adapter.fromSharedPrefs(getInt(k)),
       setter: (k, v) => setInt(k, adapter.toSharedPrefs(v)),
       remover: remove,
-    );
-  }
-
-  SharedPrefValue<Map<String, dynamic>> get myMap {
-    const adapter = MapAdapter<String, dynamic>();
-    return SharedPrefValue<Map<String, dynamic>>(
-      key: 'myMap',
-      getter: (k) => adapter.fromSharedPrefs(getString(k)),
-      setter: (k, v) => setString(k, adapter.toSharedPrefs(v)),
-      remover: remove,
-      defaultValue: {
-        "string": "tmp",
-        "int": 2,
-        "double": 3.14,
-        "bool": true,
-        "map": {"key": "value"}
-      },
     );
   }
 
