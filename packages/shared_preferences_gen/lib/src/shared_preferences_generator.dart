@@ -221,21 +221,9 @@ extension on DartType {
     return _spBaseTypes.contains(typeName);
   }
 
-  bool get isCustomSharedPrefType {
-    final typeName =
-        getDisplayString(withNullability: false).removeGenericTypes();
-    return typeName == 'CustomEntry';
-  }
-
   bool get isEnumEntry {
     final typeName =
         getDisplayString(withNullability: false).removeGenericTypes();
     return typeName == 'EnumEntry';
-  }
-
-  bool get isSerializableEntry {
-    final typeName =
-        getDisplayString(withNullability: false).removeGenericTypes();
-    return typeName == 'SerializableEntry';
   }
 }
