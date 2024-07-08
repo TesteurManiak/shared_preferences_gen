@@ -12,6 +12,14 @@ const _annotations = <Type>{
   CustomEntry,
 };
 
+const _spBaseTypes = <String>{
+  'String',
+  'int',
+  'double',
+  'bool',
+  'List<String>',
+};
+
 class SharedPreferencesGenerator extends Generator {
   const SharedPreferencesGenerator();
 
@@ -131,14 +139,23 @@ class _GetterBuilder {
   }
 
   String build() {
-    final (:getter, :setter) = sharedPrefMethods;
+    final (getter: spGetter, setter: spSetter) = sharedPrefMethods;
+    final needsAdapter = !_spBaseTypes.contains(outputType);
+    final (:getter, :setter) = switch (needsAdapter) {
+      true => (
+          getter: '(k) => adapter.fromSharedPrefs($spGetter(k))',
+          setter: '(k, v) => $spSetter(k, adapter.toSharedPrefs(v))',
+        ),
+      false => (getter: spGetter, setter: spSetter),
+    };
+
     return '''
     SharedPrefValue<$outputType> get $accessor {
-      final adapter = SharedPrefData.getAdapter<$outputType, $inputType>();
+      ${needsAdapter ? 'final adapter = SharedPrefData.getAdapter<$outputType, $inputType>();' : ''}
       return SharedPrefValue<$outputType>(
         key: '$key',
-        getter: (key) => adapter.fromSharedPrefs($getter(key)),
-        setter: (key, value) => $setter(key, adapter.toSharedPrefs(value)),
+        getter: $getter,
+        setter: $setter,
         remover: remove,
         ${defaultValue != null ? 'defaultValue: $defaultValue,' : ''}
       );
