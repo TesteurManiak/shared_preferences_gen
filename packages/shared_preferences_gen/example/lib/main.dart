@@ -10,6 +10,7 @@ part 'main.g.dart';
   SharedPrefEntry<int>(key: 'numberOfVisits', defaultValue: 0),
   SharedPrefEntry<List<String>>(key: 'history', defaultValue: []),
   DateTimeEntry(key: 'lastVisit'),
+  MapEntry(key: 'myMap', defaultValue: {}),
 ])
 Future<void> main() async {
   final prefs = await SharedPreferences.getInstance();

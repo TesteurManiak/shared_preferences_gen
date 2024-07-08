@@ -55,4 +55,15 @@ extension $SharedPreferencesGenX on SharedPreferences {
       remover: remove,
     );
   }
+
+  SharedPrefValue<Map<String, dynamic>> get myMap {
+    const adapter = MapAdapter();
+    return SharedPrefValue<Map<String, dynamic>>(
+      key: 'myMap',
+      getter: (k) => adapter.fromSharedPrefs(getString(k)),
+      setter: (k, v) => setString(k, adapter.toSharedPrefs(v)),
+      remover: remove,
+      defaultValue: {},
+    );
+  }
 }
