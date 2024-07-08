@@ -60,9 +60,11 @@ class CustomEntry<T extends Object, S> extends EntryGen<T, S> {
 /// {@template date_time_entry}
 /// Entry for a shared preference of type `DateTime`.
 ///
-/// It will be stored as an `int` in the shared preferences.
+/// It uses a [DateTimeMillisecondAdapter] to convert the `DateTime` to and from
+/// a `int` representing the milliseconds since epoch.
 /// {@endtemplate}
 class DateTimeEntry extends CustomEntry<DateTime, int> {
+  /// {@macro date_time_entry}
   const DateTimeEntry({
     required super.key,
     super.accessor,
@@ -70,7 +72,14 @@ class DateTimeEntry extends CustomEntry<DateTime, int> {
 }
 
 // TODO(Guillaume): use a better name to avoid conflicts with MapEntry from the Dart SDK.
+/// {@template map_entry}
+/// Entry for a shared preference of type `Map`.
+///
+/// It uses a [MapAdapter] to convert the `Map` to and from a `String` by
+/// decoding and encoding the map as a JSON string.
+/// {@endtemplate}
 class MapEntry<K, V> extends EntryGen<Map<K, V>, String> {
+  /// {@macro map_entry}
   const MapEntry({
     required super.key,
     super.accessor,
