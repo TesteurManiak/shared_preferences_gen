@@ -47,7 +47,7 @@ extension $SharedPreferencesGenX on SharedPreferences {
   }
 
   SharedPrefValue<DateTime> get lastVisit {
-    final adapter = SharedPrefData.getAdapter<DateTime, int>();
+    const adapter = DateTimeMillisecondAdapter();
     return SharedPrefValue<DateTime>(
       key: 'lastVisit',
       getter: (k) => adapter.fromSharedPrefs(getInt(k)),

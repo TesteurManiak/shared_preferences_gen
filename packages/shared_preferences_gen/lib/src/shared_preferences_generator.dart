@@ -84,11 +84,17 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       final key = reader.peek('key')!.stringValue;
       final accessor = reader.peek('accessor')?.stringValue;
       final defaultValue = reader.peek('defaultValue')?.literalValue;
+      final adapter = reader
+          .peek('adapter')
+          ?.objectValue
+          .type
+          ?.getDisplayString(withNullability: false);
 
       sharedPrefEntries.add(
         _GetterBuilder(
           key: key,
           accessor: accessor,
+          adapter: adapter,
           defaultValue: defaultValue,
           inputType: input,
           outputType: output,
@@ -128,6 +134,7 @@ class _GetterBuilder {
   const _GetterBuilder({
     required this.key,
     required String? accessor,
+    required this.adapter,
     required this.defaultValue,
     required this.inputType,
     required this.outputType,
@@ -135,6 +142,7 @@ class _GetterBuilder {
 
   final String key;
   final String accessor;
+  final String? adapter;
   final Object? defaultValue;
   final String inputType;
   final String outputType;
@@ -152,8 +160,8 @@ class _GetterBuilder {
 
   String build() {
     final (getter: spGetter, setter: spSetter) = sharedPrefMethods;
-    final needsAdapter = !_spBaseTypes.contains(outputType);
-    final (:getter, :setter) = switch (needsAdapter) {
+    final hasAdapter = adapter != null;
+    final (:getter, :setter) = switch (hasAdapter) {
       true => (
           getter: '(k) => adapter.fromSharedPrefs($spGetter(k))',
           setter: '(k, v) => $spSetter(k, adapter.toSharedPrefs(v))',
@@ -163,7 +171,7 @@ class _GetterBuilder {
 
     return '''
     SharedPrefValue<$outputType> get $accessor {
-      ${needsAdapter ? 'final adapter = SharedPrefData.getAdapter<$outputType, $inputType>();' : ''}
+      ${hasAdapter ? 'const adapter = $adapter();' : ''}
       return SharedPrefValue<$outputType>(
         key: '$key',
         getter: $getter,
