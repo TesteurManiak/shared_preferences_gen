@@ -1,4 +1,5 @@
 import 'package:shared_preferences_annotation/src/adapters/date_time_adapters.dart';
+import 'package:shared_preferences_annotation/src/adapters/map_adapters.dart';
 import 'package:shared_preferences_annotation/src/adapters/type_adapter.dart';
 
 sealed class EntryGen<T extends Object, S> {
@@ -69,4 +70,12 @@ class DateTimeEntry extends CustomEntry<DateTime, int> {
     super.accessor,
     super.defaultValue,
   }) : super(adapter: const DateTimeMillisecondAdapter());
+}
+
+class MapEntry extends CustomEntry<Map<String, dynamic>, String> {
+  const MapEntry({
+    required super.key,
+    super.accessor,
+    super.defaultValue,
+  }) : super(adapter: const MapAdapter());
 }

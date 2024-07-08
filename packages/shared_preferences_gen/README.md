@@ -8,7 +8,7 @@ Typesafe code generation for Flutter shared_preferences.
 
 * Check for duplicate keys
 * Type-safe accessors for shared preferences
-* Support for `DateTime` and `Enum` (coming soon)
+* Support for `DateTime` and `Map<String, dynamic>`
 
 # How to use
 
@@ -98,6 +98,6 @@ await prefs.myKey.remove();
 
 ## TODO
 
-* Support for `DateTime`
 * Support for `Enum`s
-* Support for custom types
+* Support for serializable objects
+* Support for custom objects
