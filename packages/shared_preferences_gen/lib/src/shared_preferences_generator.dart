@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
-import 'package:shared_preferences_gen/src/builders/getter_builder.dart';
+import 'package:shared_preferences_gen/src/builders/gen_builder.dart';
 import 'package:shared_preferences_gen/src/exceptions/exceptions.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -31,9 +31,15 @@ class SharedPreferencesGenerator extends Generator {
   @override
   Future<String> generate(LibraryReader library, BuildStep buildStep) async {
     final getters = <String>{};
+    final converters = <String>{};
     final keys = <String>{};
 
-    _generateForAnnotation(library, getters, keys);
+    _generateForAnnotation(
+      library: library,
+      getters: getters,
+      converters: converters,
+      keys: keys,
+    );
 
     if (getters.isEmpty) return '';
 
@@ -45,14 +51,16 @@ extension \$SharedPreferencesGenX on SharedPreferences {
   ${getters.map((getter) => getter).join('\n')}
 }
     ''',
+      ...converters,
     ].join('\n\n');
   }
 
-  void _generateForAnnotation(
-    LibraryReader library,
-    Set<String> getters,
-    Set<String> keys,
-  ) {
+  void _generateForAnnotation({
+    required LibraryReader library,
+    required Set<String> getters,
+    required Set<String> converters,
+    required Set<String> keys,
+  }) {
     for (final annotatedElement in library.annotatedWith(_typeChecker)) {
       final generatedValue = _generateForAnnotatedElement(
         annotatedElement.element,
@@ -60,19 +68,23 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       );
 
       for (final value in generatedValue) {
-        getters.add(value.build());
-        final added = keys.add(value.key);
-        if (!added) throw DuplicateKeyException(value.key);
+        switch (value) {
+          case GetterBuilder():
+            getters.add(value.build());
+            final added = keys.add(value.key);
+            if (!added) throw DuplicateKeyException(value.key);
+          case EnumBuilder():
+            converters.add(value.build());
+        }
       }
     }
   }
 
-  List<GetterBuilder> _generateForAnnotatedElement(
+  Iterable<GenBuilder> _generateForAnnotatedElement(
     Element element,
     ConstantReader annotation,
-  ) {
+  ) sync* {
     final entries = annotation.peek('entries')?.listValue ?? [];
-    final sharedPrefEntries = <GetterBuilder>[];
 
     for (final entry in entries) {
       final reader = ConstantReader(entry);
@@ -87,20 +99,18 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       final defaultValue = _parseValue(reader.peek('defaultValue'));
       final adapter = _extractAdapter(dartType, reader);
 
-      sharedPrefEntries.add(
-        GetterBuilder(
-          key: key,
-          isEnumEntry: dartType.isEnumEntry,
-          accessor: accessor,
-          adapter: adapter,
-          defaultValue: defaultValue,
-          inputType: input,
-          outputType: output,
-        ),
+      yield GetterBuilder(
+        key: key,
+        isEnumEntry: dartType.isEnumEntry,
+        accessor: accessor,
+        adapter: adapter,
+        defaultValue: defaultValue,
+        inputType: input,
+        outputType: output,
       );
-    }
 
-    return sharedPrefEntries;
+      if (dartType.isEnumEntry) yield EnumBuilder(enumType: output);
+    }
   }
 
   ({String input, String output}) _extractGenericTypes(DartType dartType) {
@@ -129,8 +139,8 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       ) =>
         (input: 'String', output: 'Map<$key, $value>'),
       ('EnumEntry', ParameterizedType(typeArguments: [final enumType])) => (
-          input: 'String',
-          output: 'EnumEntry<$enumType>'
+          input: 'int',
+          output: '$enumType'
         ),
       (
         'SerializableEntry',

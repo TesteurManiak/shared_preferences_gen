@@ -1,5 +1,4 @@
-import 'package:shared_preferences_gen/src/builders/gen_builder.dart';
-import 'package:source_helper/source_helper.dart';
+part of 'gen_builder.dart';
 
 class EnumBuilder extends GenBuilder {
   const EnumBuilder({
@@ -9,7 +8,7 @@ class EnumBuilder extends GenBuilder {
   final String enumType;
 
   static String nameGenerator(String enumType) {
-    return '_${enumType.pascal}Converter';
+    return '_\$${enumType}ConverterType';
   }
 
   String get name => nameGenerator(enumType);
@@ -17,7 +16,7 @@ class EnumBuilder extends GenBuilder {
   @override
   String build() {
     return '''
-    final $name = EnumAdapter<$enumType>($enumType.values);
+    const $name = EnumIndexAdapter<$enumType>($enumType.values);
     ''';
   }
 }

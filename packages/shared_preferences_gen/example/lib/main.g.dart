@@ -8,7 +8,7 @@ part of 'main.dart';
 
 extension $SharedPreferencesGenX on SharedPreferences {
   Set<SharedPrefValue> get entries =>
-      {title, darkMode, numberOfVisits, history, lastVisit, myMap};
+      {title, darkMode, numberOfVisits, history, lastVisit, myMap, themeMode};
 
   SharedPrefValue<String> get title {
     return SharedPrefValue<String>(
@@ -76,4 +76,16 @@ extension $SharedPreferencesGenX on SharedPreferences {
       },
     );
   }
+
+  SharedPrefValue<ThemeMode> get themeMode {
+    const adapter = _$ThemeModeConverterType;
+    return SharedPrefValue<ThemeMode>(
+      key: 'themeMode',
+      getter: (k) => adapter.fromSharedPrefs(getInt(k)),
+      setter: (k, v) => setInt(k, adapter.toSharedPrefs(v)),
+      remover: remove,
+    );
+  }
 }
+
+const _$ThemeModeConverterType = EnumIndexAdapter<ThemeMode>(ThemeMode.values);

@@ -1,5 +1,4 @@
-import 'package:shared_preferences_gen/src/builders/enum_builder.dart';
-import 'package:shared_preferences_gen/src/builders/gen_builder.dart';
+part of 'gen_builder.dart';
 
 class GetterBuilder extends GenBuilder {
   const GetterBuilder({
@@ -60,9 +59,7 @@ class GetterBuilder extends GenBuilder {
   String _buildAdapter() {
     if (adapter == null) return '';
     if (isEnumEntry) {
-      return '''
-      final adapter = ${EnumBuilder.nameGenerator(outputType)};
-      ''';
+      return 'const adapter = ${EnumBuilder.nameGenerator(outputType)};';
     }
     return 'const adapter = $adapter();';
   }

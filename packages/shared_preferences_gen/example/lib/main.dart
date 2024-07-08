@@ -20,6 +20,7 @@ part 'main.g.dart';
       'map': {'key': 'value'},
     },
   ),
+  EnumEntry<ThemeMode>(key: 'themeMode', defaultValue: ThemeMode.system),
 ])
 Future<void> main() async {
   final prefs = await SharedPreferences.getInstance();
