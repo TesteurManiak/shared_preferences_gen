@@ -3,13 +3,14 @@ import 'dart:async';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
-import 'package:shared_preferences_annotation/shared_preferences_annotation.dart';
 import 'package:shared_preferences_gen/src/exceptions/exceptions.dart';
 import 'package:source_gen/source_gen.dart';
 
-const _annotations = <Type>{
-  SharedPrefData,
-  CustomEntry,
+const _annotationsUrl =
+    'package:shared_preferences_annotation/src/shared_pref_data.dart';
+
+const _annotations = <String>{
+  'SharedPrefData',
 };
 
 const _spBaseTypes = <String>{
@@ -23,8 +24,8 @@ const _spBaseTypes = <String>{
 class SharedPreferencesGenerator extends Generator {
   const SharedPreferencesGenerator();
 
-  TypeChecker get _typeChecker =>
-      TypeChecker.any(_annotations.map((e) => TypeChecker.fromRuntime(e)));
+  TypeChecker get _typeChecker => TypeChecker.any(
+      _annotations.map((e) => TypeChecker.fromUrl('$_annotationsUrl#$e')));
 
   @override
   Future<String> generate(LibraryReader library, BuildStep buildStep) async {
