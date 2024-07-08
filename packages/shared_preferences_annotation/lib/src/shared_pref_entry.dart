@@ -1,4 +1,3 @@
-import 'package:shared_preferences_annotation/shared_preferences_annotation.dart';
 import 'package:shared_preferences_annotation/src/adapters/date_time_adapters.dart';
 import 'package:shared_preferences_annotation/src/adapters/type_adapter.dart';
 
