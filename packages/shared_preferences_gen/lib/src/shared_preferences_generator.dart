@@ -22,6 +22,10 @@ const _spBaseTypes = <String>{
   'List<String>',
 };
 
+const _customSupportedTypes = <String, String>{
+  'DateTime': 'int',
+};
+
 class SharedPreferencesGenerator extends Generator {
   const SharedPreferencesGenerator();
 
@@ -114,25 +118,23 @@ extension \$SharedPreferencesGenX on SharedPreferences {
   }
 
   ({String input, String output}) _extractGenericTypes(DartType dartType) {
-    final typeName =
-        dartType.getDisplayString(withNullability: false).removeGenericTypes();
+    final typeName = dartType.typeName;
 
     return switch ((typeName, dartType)) {
       ('SharedPrefEntry', ParameterizedType(typeArguments: [final typeArg]))
-          when typeArg.isSupportedSharedPrefType =>
+          when typeArg.isSupportedBaseType =>
+        (input: typeArg.fullTypeName, output: typeArg.fullTypeName),
+      ('SharedPrefEntry', ParameterizedType(typeArguments: [final typeArg]))
+          when typeArg.isSupportedCustomType =>
         (
-          input: typeArg.getDisplayString(withNullability: false),
-          output: typeArg.getDisplayString(withNullability: false)
+          input: _customSupportedTypes[typeArg.fullTypeName]!,
+          output: typeArg.fullTypeName
         ),
       (
         'CustomEntry',
         ParameterizedType(typeArguments: [final outputType, final inputType])
       ) =>
-        (
-          input: inputType.getDisplayString(withNullability: false),
-          output: outputType.getDisplayString(withNullability: false)
-        ),
-      ('DateTimeEntry', _) => (input: 'int', output: 'DateTime'),
+        (input: inputType.fullTypeName, output: outputType.fullTypeName),
       ('EnumEntry', ParameterizedType(typeArguments: [final enumType])) => (
           input: 'int',
           output: '$enumType'
@@ -181,16 +183,14 @@ extension \$SharedPreferencesGenX on SharedPreferences {
   }
 
   String? _extractAdapter(DartType dartType, ConstantReader reader) {
-    final adapterField = reader
-        .peek('adapter')
-        ?.objectValue
-        .type
-        ?.getDisplayString(withNullability: false);
+    final adapterField = reader.peek('adapter')?.objectValue.type?.fullTypeName;
     if (adapterField != null) return adapterField;
 
-    final typeName =
-        dartType.getDisplayString(withNullability: false).removeGenericTypes();
+    final typeName = dartType.typeName;
     return switch ((typeName, dartType)) {
+      ('SharedPrefEntry', ParameterizedType(typeArguments: [final argType]))
+          when argType.fullTypeName == 'DateTime' =>
+        'DateTimeMillisecondAdapter',
       ('EnumEntry', ParameterizedType(typeArguments: [final enumType])) =>
         'EnumAdapter<$enumType>',
       _ => null,
@@ -207,9 +207,14 @@ extension on String {
 }
 
 extension on DartType {
-  bool get isSupportedSharedPrefType {
+  bool get isSupportedBaseType {
     final typeName = getDisplayString(withNullability: false);
     return _spBaseTypes.contains(typeName);
+  }
+
+  bool get isSupportedCustomType {
+    final typeName = getDisplayString(withNullability: false);
+    return _customSupportedTypes.keys.contains(typeName);
   }
 
   bool get isEnumEntry {
@@ -217,6 +222,9 @@ extension on DartType {
         getDisplayString(withNullability: false).removeGenericTypes();
     return typeName == 'EnumEntry';
   }
+
+  String get fullTypeName => getDisplayString(withNullability: false);
+  String get typeName => fullTypeName.removeGenericTypes();
 }
 
 extension on ConstantReader {

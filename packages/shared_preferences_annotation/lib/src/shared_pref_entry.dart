@@ -57,20 +57,6 @@ class CustomEntry<T extends Object, S> extends EntryGen<T, S> {
   });
 }
 
-/// {@template date_time_entry}
-/// Entry for a shared preference of type `DateTime`.
-///
-/// It uses a [DateTimeMillisecondAdapter] to convert the `DateTime` to and from
-/// a `int` representing the milliseconds since epoch.
-/// {@endtemplate}
-class DateTimeEntry extends CustomEntry<DateTime, int> {
-  /// {@macro date_time_entry}
-  const DateTimeEntry({
-    required super.key,
-    super.accessor,
-  }) : super(adapter: const DateTimeMillisecondAdapter());
-}
-
 class EnumEntry<T extends Enum> extends EntryGen<T, int> {
   const EnumEntry({
     required super.key,

@@ -9,7 +9,7 @@ part 'main.g.dart';
   SharedPrefEntry<bool>(key: 'darkMode', defaultValue: false),
   SharedPrefEntry<int>(key: 'numberOfVisits', defaultValue: 0),
   SharedPrefEntry<List<String>>(key: 'history', defaultValue: ['0', '1']),
-  DateTimeEntry(key: 'lastVisit'),
+  SharedPrefEntry<DateTime>(key: 'lastVisit'),
   EnumEntry<ThemeMode>(key: 'themeMode', defaultValue: ThemeMode.system),
 ])
 Future<void> main() async {

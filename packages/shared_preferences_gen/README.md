@@ -64,28 +64,18 @@ To create a shared preferences entry, first create an annotation `@SharedPrefDat
 
 ### `SharedPrefEntry`
 
-A `SharedPrefEntry` can be used with any of the base types supported by `SharedPreferences`:
+A `SharedPrefEntry` can be used with any of those types:
 
 * `bool`
 * `double`
 * `int`
 * `String`
 * `List<String>`
+* `DateTime`
 
 ```dart
 @SharedPrefData(entries: [
   SharedPrefEntry<String>(key: 'myKey'),
-])
-void main() { /* ... */ }
-```
-
-### `DateTimeEntry`
-
-A `DateTimeEntry` can be used to store a `DateTime`:
-
-```dart
-@SharedPrefData(entries: [
-  DateTimeEntry(key: 'myKey'),
 ])
 void main() { /* ... */ }
 ```
