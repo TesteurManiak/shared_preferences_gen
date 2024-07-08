@@ -10,16 +10,6 @@ part 'main.g.dart';
   SharedPrefEntry<int>(key: 'numberOfVisits', defaultValue: 0),
   SharedPrefEntry<List<String>>(key: 'history', defaultValue: ['0', '1']),
   DateTimeEntry(key: 'lastVisit'),
-  MapEntry<String, dynamic>(
-    key: 'myMap',
-    defaultValue: {
-      'string': 'tmp',
-      'int': 2,
-      'double': 3.14,
-      'bool': true,
-      'map': {'key': 'value'},
-    },
-  ),
   EnumEntry<ThemeMode>(key: 'themeMode', defaultValue: ThemeMode.system),
 ])
 Future<void> main() async {

@@ -1,4 +1,5 @@
-import 'package:shared_preferences_annotation/src/adapters/map_adapters.dart';
+import 'dart:convert';
+
 import 'package:shared_preferences_annotation/src/adapters/type_adapter.dart';
 
 typedef FromJson<T> = T Function(Map<String, dynamic> json);
@@ -13,18 +14,24 @@ class SerializableAdapter<T extends Object> extends TypeAdapter<T, String> {
   final FromJson<T> fromJson;
   final ToJson<T> toJson;
 
-  static const _mapAdapter = MapAdapter<String, dynamic>();
-
   @override
   T? fromSharedPrefs(String? value) {
-    final decodedMap = _mapAdapter.fromSharedPrefs(value);
-    if (decodedMap == null) return null;
-    return fromJson(decodedMap);
+    if (value == null) return null;
+    final decodedString = _tryDecode(value);
+    if (decodedString is! Map<String, dynamic>) {
+      throw Exception('Invalid Map: "$decodedString"');
+    }
+    return fromJson(decodedString);
+  }
+
+  Object? _tryDecode(String value) {
+    try {
+      return jsonDecode(value);
+    } on FormatException {
+      return null;
+    }
   }
 
   @override
-  String toSharedPrefs(T value) {
-    final map = toJson(value);
-    return _mapAdapter.toSharedPrefs(map);
-  }
+  String toSharedPrefs(T value) => jsonEncode(toJson(value));
 }

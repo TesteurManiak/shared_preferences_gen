@@ -8,7 +8,7 @@ Typesafe code generation for Flutter shared_preferences.
 
 * Check for duplicate keys
 * Type-safe accessors for shared preferences
-* Support for `DateTime`, `Enum` and `Map` (that can be encoded as JSON)
+* Support for `DateTime` and `Enum`
 
 # How to use
 

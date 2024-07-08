@@ -133,11 +133,6 @@ extension \$SharedPreferencesGenX on SharedPreferences {
           output: outputType.getDisplayString(withNullability: false)
         ),
       ('DateTimeEntry', _) => (input: 'int', output: 'DateTime'),
-      (
-        'MapEntry',
-        ParameterizedType(typeArguments: [final key, final value])
-      ) =>
-        (input: 'String', output: 'Map<$key, $value>'),
       ('EnumEntry', ParameterizedType(typeArguments: [final enumType])) => (
           input: 'int',
           output: '$enumType'
@@ -196,11 +191,6 @@ extension \$SharedPreferencesGenX on SharedPreferences {
     final typeName =
         dartType.getDisplayString(withNullability: false).removeGenericTypes();
     return switch ((typeName, dartType)) {
-      (
-        'MapEntry',
-        ParameterizedType(typeArguments: [final key, final value])
-      ) =>
-        'MapAdapter<$key, $value>',
       ('EnumEntry', ParameterizedType(typeArguments: [final enumType])) =>
         'EnumAdapter<$enumType>',
       _ => null,

@@ -71,22 +71,6 @@ class DateTimeEntry extends CustomEntry<DateTime, int> {
   }) : super(adapter: const DateTimeMillisecondAdapter());
 }
 
-// TODO(Guillaume): use a better name to avoid conflicts with MapEntry from the Dart SDK.
-/// {@template map_entry}
-/// Entry for a shared preference of type `Map`.
-///
-/// It uses a [MapAdapter] to convert the `Map` to and from a `String` by
-/// decoding and encoding the map as a JSON string.
-/// {@endtemplate}
-class MapEntry<K, V> extends EntryGen<Map<K, V>, String> {
-  /// {@macro map_entry}
-  const MapEntry({
-    required super.key,
-    super.accessor,
-    super.defaultValue,
-  });
-}
-
 class EnumEntry<T extends Enum> extends EntryGen<T, int> {
   const EnumEntry({
     required super.key,
