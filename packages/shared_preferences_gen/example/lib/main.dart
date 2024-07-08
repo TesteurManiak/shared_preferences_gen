@@ -10,7 +10,7 @@ part 'main.g.dart';
   SharedPrefEntry<int>(key: 'numberOfVisits', defaultValue: 0),
   SharedPrefEntry<List<String>>(key: 'history', defaultValue: ['0', '1']),
   SharedPrefEntry<DateTime>(key: 'lastVisit'),
-  EnumEntry<ThemeMode>(key: 'themeMode', defaultValue: ThemeMode.system),
+  SharedPrefEntry<ThemeMode>(key: 'themeMode', defaultValue: ThemeMode.system),
 ])
 Future<void> main() async {
   final prefs = await SharedPreferences.getInstance();

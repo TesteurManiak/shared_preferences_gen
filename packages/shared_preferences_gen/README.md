@@ -72,23 +72,11 @@ A `SharedPrefEntry` can be used with any of those types:
 * `String`
 * `List<String>`
 * `DateTime`
+* Any `enum`
 
 ```dart
 @SharedPrefData(entries: [
   SharedPrefEntry<String>(key: 'myKey'),
-])
-void main() { /* ... */ }
-```
-
-### `EnumEntry`
-
-An `EnumEntry` can be used to store any `Enum` object:
-
-```dart
-enum MyEnum { value1, value2 }
-
-@SharedPrefData(entries: [
-  EnumEntry<MyEnum>(key: 'myKey', defaultValue: MyEnum.value1),
 ])
 void main() { /* ... */ }
 ```
