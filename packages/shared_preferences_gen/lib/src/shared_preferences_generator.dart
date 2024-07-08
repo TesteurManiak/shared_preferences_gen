@@ -167,7 +167,8 @@ extension \$SharedPreferencesGenX on SharedPreferences {
           return MapEntry(
               _parseValue(ConstantReader(k)), _parseValue(ConstantReader(v)));
         }),
-      _ => null,
+      _ when reader.isEnum => reader.enumValue,
+      _ => reader.objectValue,
     };
 
     return _encodeToString(value);
@@ -225,5 +226,19 @@ extension on DartType {
     final typeName =
         getDisplayString(withNullability: false).removeGenericTypes();
     return typeName == 'EnumEntry';
+  }
+}
+
+extension on ConstantReader {
+  bool get isEnum => objectValue.type?.element?.kind == ElementKind.ENUM;
+
+  String get enumValue {
+    if (!isEnum) throw Exception('Not an enum value');
+
+    final enumClassName =
+        objectValue.type!.getDisplayString(withNullability: false);
+    final enumValueName = objectValue.getField('_name')!.toStringValue();
+
+    return '$enumClassName.$enumValueName';
   }
 }

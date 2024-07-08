@@ -84,6 +84,7 @@ extension $SharedPreferencesGenX on SharedPreferences {
       getter: (k) => adapter.fromSharedPrefs(getInt(k)),
       setter: (k, v) => setInt(k, adapter.toSharedPrefs(v)),
       remover: remove,
+      defaultValue: ThemeMode.system,
     );
   }
 }
