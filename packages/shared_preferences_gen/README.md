@@ -1,5 +1,7 @@
 # shared_preferences_gen
 
+[![melos](https://img.shields.io/badge/maintained%20with-melos-f700ff.svg)](https://github.com/invertase/melos)
+
 Typesafe code generation for Flutter shared_preferences.
 
 ## Features
