@@ -22,10 +22,6 @@ const _spBaseTypes = <String>{
   'List<String>',
 };
 
-const _customSupportedTypes = <String, String>{
-  'DateTime': 'int',
-};
-
 class SharedPreferencesGenerator extends Generator {
   const SharedPreferencesGenerator();
 
@@ -125,11 +121,8 @@ extension \$SharedPreferencesGenX on SharedPreferences {
           when typeArg.isSupportedBaseType =>
         (input: typeArg.fullTypeName, output: typeArg.fullTypeName),
       ('SharedPrefEntry', ParameterizedType(typeArguments: [final typeArg]))
-          when typeArg.isSupportedCustomType =>
-        (
-          input: _customSupportedTypes[typeArg.fullTypeName]!,
-          output: typeArg.fullTypeName
-        ),
+          when typeArg.isDateTime =>
+        (input: 'int', output: typeArg.fullTypeName),
       ('SharedPrefEntry', ParameterizedType(typeArguments: [final typeArg]))
           when typeArg.isEnum =>
         (input: 'int', output: typeArg.fullTypeName),
@@ -210,11 +203,6 @@ extension on DartType {
   bool get isSupportedBaseType {
     final typeName = getDisplayString(withNullability: false);
     return _spBaseTypes.contains(typeName);
-  }
-
-  bool get isSupportedCustomType {
-    final typeName = getDisplayString(withNullability: false);
-    return _customSupportedTypes.keys.contains(typeName);
   }
 
   bool get isEnumEntry {
