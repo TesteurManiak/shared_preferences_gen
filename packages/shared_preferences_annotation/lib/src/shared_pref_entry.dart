@@ -1,4 +1,4 @@
-sealed class EntryGen<T extends Object> {
+sealed class EntryGen<T extends Object, S> {
   const EntryGen({
     required this.key,
     this.accessor,
@@ -17,7 +17,7 @@ sealed class EntryGen<T extends Object> {
   final T? defaultValue;
 }
 
-class SharedPrefEntry<T extends Object> extends EntryGen<T> {
+class SharedPrefEntry<T extends Object> extends EntryGen<T, T> {
   const SharedPrefEntry({
     required super.key,
     super.accessor,
@@ -25,8 +25,16 @@ class SharedPrefEntry<T extends Object> extends EntryGen<T> {
   });
 }
 
-class CustomEntry<T extends Object, S> extends EntryGen<T> {
+class CustomEntry<T extends Object, S> extends EntryGen<T, S> {
   const CustomEntry({
+    required super.key,
+    super.accessor,
+    super.defaultValue,
+  });
+}
+
+class DateTimeEntry extends CustomEntry<DateTime, int> {
+  const DateTimeEntry({
     required super.key,
     super.accessor,
     super.defaultValue,

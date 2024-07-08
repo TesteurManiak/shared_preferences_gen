@@ -8,8 +8,10 @@ class DuplicateKeyException implements Exception {
 }
 
 class NoGenericTypeException implements Exception {
-  const NoGenericTypeException();
+  const NoGenericTypeException(this.type);
+
+  final String type;
 
   @override
-  String toString() => 'No generic type found on SharedPrefData annotation.';
+  String toString() => 'No generic type found on $type object.';
 }

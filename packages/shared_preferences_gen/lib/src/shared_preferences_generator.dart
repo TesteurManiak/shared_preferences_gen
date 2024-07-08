@@ -78,20 +78,7 @@ extension \$SharedPreferencesGenX on SharedPreferences {
 
       // Generic type check
       final dartType = reader.objectValue.type;
-      if (dartType is! ParameterizedType) {
-        throw const NoGenericTypeException();
-      }
-
-      final (:outputType, :inputType) = switch (dartType.typeArguments) {
-        [final outputType] => (outputType: outputType, inputType: outputType),
-        [final outputType, final inputType] ||
-        [final outputType, final inputType, ...] =>
-          (outputType: outputType, inputType: inputType),
-        _ => throw const NoGenericTypeException(),
-      };
-
-      final outputName = outputType.getDisplayString(withNullability: false);
-      final inputName = inputType.getDisplayString(withNullability: false);
+      final (:output, :input) = _extractGenericTypes(dartType!);
 
       // Properties
       final key = reader.peek('key')!.stringValue;
@@ -103,13 +90,36 @@ extension \$SharedPreferencesGenX on SharedPreferences {
           key: key,
           accessor: accessor,
           defaultValue: defaultValue,
-          inputType: inputName,
-          outputType: outputName,
+          inputType: input,
+          outputType: output,
         ),
       );
     }
 
     return sharedPrefEntries;
+  }
+
+  ({String input, String output}) _extractGenericTypes(DartType dartType) {
+    final typeName =
+        dartType.getDisplayString(withNullability: false).removeGenericTypes();
+
+    return switch ((typeName, dartType)) {
+      ('SharedPrefEntry', ParameterizedType(typeArguments: [final typeArg])) =>
+        (
+          input: typeArg.getDisplayString(withNullability: false),
+          output: typeArg.getDisplayString(withNullability: false)
+        ),
+      (
+        'CustomEntry',
+        ParameterizedType(typeArguments: [final outputType, final inputType])
+      ) =>
+        (
+          input: inputType.getDisplayString(withNullability: false),
+          output: outputType.getDisplayString(withNullability: false)
+        ),
+      ('DateTimeEntry', _) => (input: 'int', output: 'DateTime'),
+      _ => throw NoGenericTypeException(typeName),
+    };
   }
 }
 
@@ -162,5 +172,13 @@ class _GetterBuilder {
       );
     }
     ''';
+  }
+}
+
+extension on String {
+  /// Remove generic types from a string. (e.g. `List<String>` -> `List`)
+  String removeGenericTypes() {
+    final regex = RegExp(r'<.*>');
+    return replaceAll(regex, '');
   }
 }
