@@ -83,15 +83,8 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       // Properties
       final key = reader.peek('key')!.stringValue;
       final accessor = reader.peek('accessor')?.stringValue;
-
-      // Get the default value from the element in the "defaultValue" field.
       final defaultValue = _parseValue(reader.peek('defaultValue'));
-
-      final adapter = reader
-          .peek('adapter')
-          ?.objectValue
-          .type
-          ?.getDisplayString(withNullability: false);
+      final adapter = _extractAdapter(dartType, reader);
 
       sharedPrefEntries.add(
         _GetterBuilder(
@@ -128,7 +121,11 @@ extension \$SharedPreferencesGenX on SharedPreferences {
           output: outputType.getDisplayString(withNullability: false)
         ),
       ('DateTimeEntry', _) => (input: 'int', output: 'DateTime'),
-      ('MapEntry', _) => (input: 'String', output: 'Map<String, dynamic>'),
+      (
+        'MapEntry',
+        ParameterizedType(typeArguments: [final key, final value])
+      ) =>
+        (input: 'String', output: 'Map<$key, $value>'),
       _ => throw NoGenericTypeException(typeName),
     };
   }
@@ -164,6 +161,28 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       Map() =>
         "{${value.entries.map((e) => '${_encodeToString(e.key)}: ${_encodeToString(e.value)}').join(', ')}}",
       _ => value.toString(),
+    };
+  }
+
+  String? _extractAdapter(DartType dartType, ConstantReader reader) {
+    final adapterField = reader
+        .peek('adapter')
+        ?.objectValue
+        .type
+        ?.getDisplayString(withNullability: false);
+    if (adapterField != null) return adapterField;
+
+    final typeName =
+        dartType.getDisplayString(withNullability: false).removeGenericTypes();
+    return switch ((typeName, dartType)) {
+      (
+        'MapEntry',
+        ParameterizedType(typeArguments: [final key, final value])
+      ) =>
+        'MapAdapter<$key, $value>',
+      ('EnumEntry', ParameterizedType(typeArguments: [final enumType])) =>
+        'EnumAdapter<$enumType>',
+      _ => null,
     };
   }
 }

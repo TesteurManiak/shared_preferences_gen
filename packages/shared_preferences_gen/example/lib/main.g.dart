@@ -61,7 +61,7 @@ extension $SharedPreferencesGenX on SharedPreferences {
   }
 
   SharedPrefValue<Map<String, dynamic>> get myMap {
-    const adapter = MapAdapter();
+    const adapter = MapAdapter<String, dynamic>();
     return SharedPrefValue<Map<String, dynamic>>(
       key: 'myMap',
       getter: (k) => adapter.fromSharedPrefs(getString(k)),

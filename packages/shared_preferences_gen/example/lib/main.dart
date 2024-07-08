@@ -10,7 +10,7 @@ part 'main.g.dart';
   SharedPrefEntry<int>(key: 'numberOfVisits', defaultValue: 0),
   SharedPrefEntry<List<String>>(key: 'history', defaultValue: ['0', '1']),
   DateTimeEntry(key: 'lastVisit'),
-  MapEntry(
+  MapEntry<String, dynamic>(
     key: 'myMap',
     defaultValue: {
       'string': 'tmp',

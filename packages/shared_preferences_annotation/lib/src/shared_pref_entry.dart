@@ -1,6 +1,4 @@
-import 'package:shared_preferences_annotation/src/adapters/date_time_adapters.dart';
-import 'package:shared_preferences_annotation/src/adapters/map_adapters.dart';
-import 'package:shared_preferences_annotation/src/adapters/type_adapter.dart';
+import 'package:shared_preferences_annotation/shared_preferences_annotation.dart';
 
 sealed class EntryGen<T extends Object, S> {
   const EntryGen({
@@ -71,10 +69,19 @@ class DateTimeEntry extends CustomEntry<DateTime, int> {
   }) : super(adapter: const DateTimeMillisecondAdapter());
 }
 
-class MapEntry extends CustomEntry<Map<String, dynamic>, String> {
+// TODO(Guillaume): use a better name to avoid conflicts with MapEntry from the Dart SDK.
+class MapEntry<K, V> extends EntryGen<Map<K, V>, String> {
   const MapEntry({
     required super.key,
     super.accessor,
     super.defaultValue,
-  }) : super(adapter: const MapAdapter());
+  });
+}
+
+class EnumEntry<T extends Enum> extends EntryGen<T, int> {
+  const EnumEntry({
+    required super.key,
+    super.accessor,
+    super.defaultValue,
+  });
 }

@@ -13,7 +13,7 @@ class SerializableAdapter<T extends Object> extends TypeAdapter<T, String> {
   final FromJson<T> fromJson;
   final ToJson<T> toJson;
 
-  static const _mapAdapter = MapAdapter();
+  static const _mapAdapter = MapAdapter<String, dynamic>();
 
   @override
   T? fromSharedPrefs(String? value) {
