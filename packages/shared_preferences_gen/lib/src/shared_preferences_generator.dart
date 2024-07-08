@@ -125,6 +125,7 @@ extension \$SharedPreferencesGenX on SharedPreferences {
           output: outputType.getDisplayString(withNullability: false)
         ),
       ('DateTimeEntry', _) => (input: 'int', output: 'DateTime'),
+      ('MapEntry', _) => (input: 'String', output: 'Map<String, dynamic>'),
       _ => throw NoGenericTypeException(typeName),
     };
   }
