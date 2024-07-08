@@ -4,7 +4,7 @@ import 'package:shared_preferences_annotation/shared_preferences_annotation.dart
 
 part 'main.g.dart';
 
-@SharedPrefData([
+@SharedPrefData(entries: [
   SharedPrefEntry<String>(key: 'title'),
   SharedPrefEntry<bool>(key: 'darkMode', defaultValue: false),
   SharedPrefEntry<int>(key: 'numberOfVisits', defaultValue: 0),
@@ -44,23 +44,21 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
 
-    debugPrint('''
+    widget.prefs.lastVisit.setValue(DateTime.now());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text('''
   SharedPreferences data:
   * title: ${widget.prefs.title}
   * darkMode: ${widget.prefs.darkMode}
   * numberOfVisits: ${widget.prefs.numberOfVisits}
   * history: ${widget.prefs.history}
   * lastVisit: ${widget.prefs.lastVisit}
-  ''');
-
-    widget.prefs.lastVisit.setValue(DateTime.now());
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Hello World!'),
+  '''),
       ),
     );
   }
