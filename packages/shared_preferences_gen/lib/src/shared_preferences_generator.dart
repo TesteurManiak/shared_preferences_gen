@@ -30,28 +30,30 @@ class SharedPreferencesGenerator extends Generator {
   @override
   Future<String> generate(LibraryReader library, BuildStep buildStep) async {
     final getters = <String>{};
-    final adapters = <String>{};
+    final keys = <String>{};
 
-    _generateForAnnotation(library, getters, adapters);
+    _generateForAnnotation(library, getters, keys);
 
     if (getters.isEmpty) return '';
 
     return [
       '''
 extension \$SharedPreferencesGenX on SharedPreferences {
- ${getters.map((getter) => getter).join('\n')}
+  ${keys.isNotEmpty ? 'Set<String> get keys => {${[
+          ...keys.map((k) => "'$k'")
+        ].join(', ')}};' : ''}
+
+  ${getters.map((getter) => getter).join('\n')}
 }
     ''',
-      ...adapters,
     ].join('\n\n');
   }
 
   void _generateForAnnotation(
     LibraryReader library,
     Set<String> getters,
-    Set<String> adapters,
+    Set<String> keys,
   ) {
-    final keys = <String>{};
     for (final annotatedElement in library.annotatedWith(_typeChecker)) {
       final generatedValue = _generateForAnnotatedElement(
         annotatedElement.element,

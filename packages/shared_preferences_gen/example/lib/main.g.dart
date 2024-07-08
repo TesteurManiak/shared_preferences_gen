@@ -7,6 +7,9 @@ part of 'main.dart';
 // **************************************************************************
 
 extension $SharedPreferencesGenX on SharedPreferences {
+  Set<String> get keys =>
+      {'title', 'darkMode', 'numberOfVisits', 'history', 'lastVisit', 'myMap'};
+
   SharedPrefValue<String> get title {
     return SharedPrefValue<String>(
       key: 'title',
