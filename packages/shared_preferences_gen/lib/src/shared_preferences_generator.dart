@@ -39,9 +39,7 @@ class SharedPreferencesGenerator extends Generator {
     return [
       '''
 extension \$SharedPreferencesGenX on SharedPreferences {
-  ${keys.isNotEmpty ? 'Set<String> get keys => {${[
-          ...keys.map((k) => "'$k'")
-        ].join(', ')}};' : ''}
+  ${keys.isNotEmpty ? 'Set<SharedPrefValue> get entries => {${keys.join(', ')}};' : ''}
 
   ${getters.map((getter) => getter).join('\n')}
 }

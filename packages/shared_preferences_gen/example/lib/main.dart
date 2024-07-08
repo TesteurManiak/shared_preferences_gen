@@ -10,7 +10,16 @@ part 'main.g.dart';
   SharedPrefEntry<int>(key: 'numberOfVisits', defaultValue: 0),
   SharedPrefEntry<List<String>>(key: 'history', defaultValue: ['0', '1']),
   DateTimeEntry(key: 'lastVisit'),
-  MapEntry(key: 'myMap', defaultValue: {'1': 'tmp', '2': 2}),
+  MapEntry(
+    key: 'myMap',
+    defaultValue: {
+      'string': 'tmp',
+      'int': 2,
+      'double': 3.14,
+      'bool': true,
+      'map': {'key': 'value'},
+    },
+  ),
 ])
 Future<void> main() async {
   final prefs = await SharedPreferences.getInstance();
@@ -51,15 +60,16 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text('''
-  SharedPreferences data:
-  * title: ${widget.prefs.title}
-  * darkMode: ${widget.prefs.darkMode}
-  * numberOfVisits: ${widget.prefs.numberOfVisits}
-  * history: ${widget.prefs.history}
-  * lastVisit: ${widget.prefs.lastVisit}
-  '''),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: widget.prefs.entries.length,
+        itemBuilder: (context, index) {
+          final entry = widget.prefs.entries.elementAt(index);
+          return ListTile(
+            title: Text(entry.key),
+            subtitle: Text(entry.value.toString()),
+          );
+        },
       ),
     );
   }

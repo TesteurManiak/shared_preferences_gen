@@ -68,7 +68,6 @@ class DateTimeEntry extends CustomEntry<DateTime, int> {
   const DateTimeEntry({
     required super.key,
     super.accessor,
-    super.defaultValue,
   }) : super(adapter: const DateTimeMillisecondAdapter());
 }
 
