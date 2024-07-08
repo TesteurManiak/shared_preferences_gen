@@ -8,7 +8,7 @@ Typesafe code generation for Flutter shared_preferences.
 
 * Check for duplicate keys
 * Type-safe accessors for shared preferences
-* Support for `DateTime` and `Map` (that can be encoded as JSON)
+* Support for `DateTime`, `Enum` and `Map` (that can be encoded as JSON)
 
 # How to use
 
@@ -60,16 +60,47 @@ dart run build_runner build --delete-conflicting-outputs
 
 ## Create a shared preferences entry
 
-To create a shared preferences entry, first create an annotation `@SharedPrefData` in the file where you want to store your instance of `SharedPreferences`. Then add a `SharedPrefEntry` with its corresponding type, key and default value (optional).
+To create a shared preferences entry, first create an annotation `@SharedPrefData` in the file where you want to store your instance of `SharedPreferences`. Then add an entry with its corresponding type, key and default value (optional).
+
+### `SharedPrefEntry`
+
+A `SharedPrefEntry` can be used with any of the base types supported by `SharedPreferences`:
+
+* `bool`
+* `double`
+* `int`
+* `String`
+* `List<String>`
 
 ```dart
 @SharedPrefData(entries: [
   SharedPrefEntry<String>(key: 'myKey'),
-  SharedPrefEntry<bool>(key: 'darkMode', defaultValue: false),
 ])
-void main() {
-    // ...
-}
+void main() { /* ... */ }
+```
+
+### `DateTimeEntry`
+
+A `DateTimeEntry` can be used to store a `DateTime`:
+
+```dart
+@SharedPrefData(entries: [
+  DateTimeEntry(key: 'myKey'),
+])
+void main() { /* ... */ }
+```
+
+### `EnumEntry`
+
+An `EnumEntry` can be used to store any `Enum` object:
+
+```dart
+enum MyEnum { value1, value2 }
+
+@SharedPrefData(entries: [
+  EnumEntry<MyEnum>(key: 'myKey', defaultValue: MyEnum.value1),
+])
+void main() { /* ... */ }
 ```
 
 ## Read an entry
@@ -98,6 +129,5 @@ await prefs.myKey.remove();
 
 ## TODO
 
-* Support for `Enum`s
 * Support for serializable objects
 * Support for custom objects
