@@ -3,7 +3,7 @@ part of 'gen_builder.dart';
 class GetterBuilder extends GenBuilder {
   const GetterBuilder({
     required this.key,
-    required this.isEnumEntry,
+    required this.isEnum,
     required String? accessor,
     required this.adapter,
     required this.defaultValue,
@@ -12,7 +12,7 @@ class GetterBuilder extends GenBuilder {
   }) : accessor = accessor ?? key;
 
   final String key;
-  final bool isEnumEntry;
+  final bool isEnum;
   final String accessor;
   final String? adapter;
   final String? defaultValue;
@@ -58,7 +58,7 @@ class GetterBuilder extends GenBuilder {
 
   String _buildAdapter() {
     if (adapter == null) return '';
-    if (isEnumEntry) {
+    if (isEnum) {
       return 'const adapter = ${EnumBuilder.nameGenerator(outputType)};';
     }
     return 'const adapter = $adapter();';

@@ -105,7 +105,7 @@ extension \$SharedPreferencesGenX on SharedPreferences {
 
       yield GetterBuilder(
         key: key,
-        isEnumEntry: dartType.isEnumEntry,
+        isEnum: dartType.isEnumEntry,
         accessor: accessor,
         adapter: adapter,
         defaultValue: defaultValue,
@@ -130,15 +130,14 @@ extension \$SharedPreferencesGenX on SharedPreferences {
           input: _customSupportedTypes[typeArg.fullTypeName]!,
           output: typeArg.fullTypeName
         ),
+      ('SharedPrefEntry', ParameterizedType(typeArguments: [final typeArg]))
+          when typeArg.isEnum =>
+        (input: 'int', output: typeArg.fullTypeName),
       (
         'CustomEntry',
         ParameterizedType(typeArguments: [final outputType, final inputType])
       ) =>
         (input: inputType.fullTypeName, output: outputType.fullTypeName),
-      ('EnumEntry', ParameterizedType(typeArguments: [final enumType])) => (
-          input: 'int',
-          output: '$enumType'
-        ),
       (
         'SerializableEntry',
         ParameterizedType(typeArguments: [final serializableType])
@@ -189,9 +188,10 @@ extension \$SharedPreferencesGenX on SharedPreferences {
     final typeName = dartType.typeName;
     return switch ((typeName, dartType)) {
       ('SharedPrefEntry', ParameterizedType(typeArguments: [final argType]))
-          when argType.fullTypeName == 'DateTime' =>
+          when argType.isDateTime =>
         'DateTimeMillisecondAdapter',
-      ('EnumEntry', ParameterizedType(typeArguments: [final enumType])) =>
+      ('SharedPrefEntry', ParameterizedType(typeArguments: [final enumType]))
+          when enumType.isEnum =>
         'EnumAdapter<$enumType>',
       _ => null,
     };
@@ -218,17 +218,21 @@ extension on DartType {
   }
 
   bool get isEnumEntry {
-    final typeName =
-        getDisplayString(withNullability: false).removeGenericTypes();
-    return typeName == 'EnumEntry';
+    return switch ((typeName, this)) {
+      ('SharedPrefEntry', ParameterizedType(typeArguments: [final arg])) =>
+        arg.isEnum,
+      _ => false,
+    };
   }
 
+  bool get isEnum => element?.kind == ElementKind.ENUM;
+  bool get isDateTime => getDisplayString(withNullability: false) == 'DateTime';
   String get fullTypeName => getDisplayString(withNullability: false);
   String get typeName => fullTypeName.removeGenericTypes();
 }
 
 extension on ConstantReader {
-  bool get isEnum => objectValue.type?.element?.kind == ElementKind.ENUM;
+  bool get isEnum => objectValue.type?.isEnum ?? false;
 
   String get enumValue {
     if (!isEnum) throw Exception('Not an enum value');
