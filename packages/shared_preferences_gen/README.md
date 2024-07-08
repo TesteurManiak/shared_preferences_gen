@@ -8,7 +8,7 @@ Typesafe code generation for Flutter shared_preferences.
 
 * Check for duplicate keys
 * Type-safe accessors for shared preferences
-* Support for `DateTime` and `Map<String, dynamic>`
+* Support for `DateTime` and `Map` (that can be encoded as JSON)
 
 # How to use
 
