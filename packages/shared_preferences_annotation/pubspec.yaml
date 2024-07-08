@@ -2,6 +2,11 @@ name: shared_preferences_annotation
 description: "A new Flutter package project."
 version: 0.0.1
 homepage: https://github.com/TesteurManiak/shared_preferences_gen
+repository: https://github.com/TesteurManiak/shared_preferences_gen/tree/main/packages/shared_preferences_annotation
+topics:
+  - codegen
+  - build-runner
+  - shared-preferences
 
 environment:
   sdk: ">=3.4.1 <4.0.0"

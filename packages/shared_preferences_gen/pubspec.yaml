@@ -5,6 +5,7 @@ homepage: https://github.com/TesteurManiak/shared_preferences_gen
 repository: https://github.com/TesteurManiak/shared_preferences_gen/tree/main/packages/shared_preferences_gen
 topics:
   - codegen
+  - build-runner
   - shared-preferences
 publish_to: "none"
 
