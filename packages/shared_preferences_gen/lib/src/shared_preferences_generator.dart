@@ -126,16 +126,14 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       ('SharedPrefEntry', ParameterizedType(typeArguments: [final typeArg]))
           when typeArg.isEnum =>
         (input: 'int', output: typeArg.fullTypeName),
+      ('SharedPrefEntry', ParameterizedType(typeArguments: [final typeArg]))
+          when typeArg.isSerializable =>
+        (input: 'String', output: typeArg.fullTypeName),
       (
         'CustomEntry',
         ParameterizedType(typeArguments: [final outputType, final inputType])
       ) =>
         (input: inputType.fullTypeName, output: outputType.fullTypeName),
-      (
-        'SerializableEntry',
-        ParameterizedType(typeArguments: [final serializableType])
-      ) =>
-        (input: 'String', output: 'SerializableEntry<$serializableType>'),
       _ => throw NoGenericTypeException(typeName),
     };
   }
@@ -215,6 +213,24 @@ extension on DartType {
 
   bool get isEnum => element?.kind == ElementKind.ENUM;
   bool get isDateTime => getDisplayString(withNullability: false) == 'DateTime';
+
+  bool get isSerializable {
+    final classElement = element;
+    if (classElement is! ClassElement) return false;
+
+    final hasToJson = classElement.methods
+        .firstWhereOrNull((e) => e.name == 'toJson' && e.parameters.isEmpty);
+    if (hasToJson == null) return false;
+
+    final hasFromJson = classElement.constructors.firstWhereOrNull((e) =>
+        e.name == 'fromJson' &&
+        e.isFactory &&
+        e.parameters.length == 1 &&
+        e.parameters.first.type.isDartCoreMap);
+
+    return hasFromJson != null;
+  }
+
   String get fullTypeName => getDisplayString(withNullability: false);
   String get typeName => fullTypeName.removeGenericTypes();
 }
@@ -230,5 +246,14 @@ extension on ConstantReader {
     final enumValueName = objectValue.getField('_name')!.toStringValue();
 
     return '$enumClassName.$enumValueName';
+  }
+}
+
+extension<T> on Iterable<T> {
+  T? firstWhereOrNull(bool Function(T) test) {
+    for (final element in this) {
+      if (test(element)) return element;
+    }
+    return null;
   }
 }
