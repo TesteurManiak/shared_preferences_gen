@@ -9,7 +9,7 @@ part 'main.g.dart';
   SharedPrefEntry<bool>(key: 'darkMode', defaultValue: false),
   SharedPrefEntry<int>(key: 'numberOfVisits', defaultValue: 0),
   SharedPrefEntry<List<String>>(key: 'history', defaultValue: []),
-  CustomEntry<DateTime, int>(key: 'lastVisit'),
+  DateTimeEntry(key: 'lastVisit'),
 ])
 Future<void> main() async {
   final prefs = await SharedPreferences.getInstance();
