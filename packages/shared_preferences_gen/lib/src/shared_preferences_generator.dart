@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
+import 'package:shared_preferences_gen/src/builders/getter_builder.dart';
 import 'package:shared_preferences_gen/src/exceptions/exceptions.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -66,12 +67,12 @@ extension \$SharedPreferencesGenX on SharedPreferences {
     }
   }
 
-  List<_GetterBuilder> _generateForAnnotatedElement(
+  List<GetterBuilder> _generateForAnnotatedElement(
     Element element,
     ConstantReader annotation,
   ) {
     final entries = annotation.peek('entries')?.listValue ?? [];
-    final sharedPrefEntries = <_GetterBuilder>[];
+    final sharedPrefEntries = <GetterBuilder>[];
 
     for (final entry in entries) {
       final reader = ConstantReader(entry);
@@ -87,8 +88,9 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       final adapter = _extractAdapter(dartType, reader);
 
       sharedPrefEntries.add(
-        _GetterBuilder(
+        GetterBuilder(
           key: key,
+          isEnumEntry: dartType.isEnumEntry,
           accessor: accessor,
           adapter: adapter,
           defaultValue: defaultValue,
@@ -126,6 +128,15 @@ extension \$SharedPreferencesGenX on SharedPreferences {
         ParameterizedType(typeArguments: [final key, final value])
       ) =>
         (input: 'String', output: 'Map<$key, $value>'),
+      ('EnumEntry', ParameterizedType(typeArguments: [final enumType])) => (
+          input: 'String',
+          output: 'EnumEntry<$enumType>'
+        ),
+      (
+        'SerializableEntry',
+        ParameterizedType(typeArguments: [final serializableType])
+      ) =>
+        (input: 'String', output: 'SerializableEntry<$serializableType>'),
       _ => throw NoGenericTypeException(typeName),
     };
   }
@@ -187,60 +198,6 @@ extension \$SharedPreferencesGenX on SharedPreferences {
   }
 }
 
-class _GetterBuilder {
-  const _GetterBuilder({
-    required this.key,
-    required String? accessor,
-    required this.adapter,
-    required this.defaultValue,
-    required this.inputType,
-    required this.outputType,
-  }) : accessor = accessor ?? key;
-
-  final String key;
-  final String accessor;
-  final String? adapter;
-  final String? defaultValue;
-  final String inputType;
-  final String outputType;
-
-  ({String getter, String setter}) get sharedPrefMethods {
-    return switch (inputType) {
-      'String' => (getter: 'getString', setter: 'setString'),
-      'int' => (getter: 'getInt', setter: 'setInt'),
-      'double' => (getter: 'getDouble', setter: 'setDouble'),
-      'bool' => (getter: 'getBool', setter: 'setBool'),
-      'List<String>' => (getter: 'getStringList', setter: 'setStringList'),
-      _ => throw StateError('Unsupported type: $inputType'),
-    };
-  }
-
-  String build() {
-    final (getter: spGetter, setter: spSetter) = sharedPrefMethods;
-    final hasAdapter = adapter != null;
-    final (:getter, :setter) = switch (hasAdapter) {
-      true => (
-          getter: '(k) => adapter.fromSharedPrefs($spGetter(k))',
-          setter: '(k, v) => $spSetter(k, adapter.toSharedPrefs(v))',
-        ),
-      false => (getter: spGetter, setter: spSetter),
-    };
-
-    return '''
-    SharedPrefValue<$outputType> get $accessor {
-      ${hasAdapter ? 'const adapter = $adapter();' : ''}
-      return SharedPrefValue<$outputType>(
-        key: '$key',
-        getter: $getter,
-        setter: $setter,
-        remover: remove,
-        ${defaultValue != null ? 'defaultValue: $defaultValue,' : ''}
-      );
-    }
-    ''';
-  }
-}
-
 extension on String {
   /// Remove generic types from a string. (e.g. `List<String>` -> `List`)
   String removeGenericTypes() {
@@ -253,5 +210,23 @@ extension on DartType {
   bool get isSupportedSharedPrefType {
     final typeName = getDisplayString(withNullability: false);
     return _spBaseTypes.contains(typeName);
+  }
+
+  bool get isCustomSharedPrefType {
+    final typeName =
+        getDisplayString(withNullability: false).removeGenericTypes();
+    return typeName == 'CustomEntry';
+  }
+
+  bool get isEnumEntry {
+    final typeName =
+        getDisplayString(withNullability: false).removeGenericTypes();
+    return typeName == 'EnumEntry';
+  }
+
+  bool get isSerializableEntry {
+    final typeName =
+        getDisplayString(withNullability: false).removeGenericTypes();
+    return typeName == 'SerializableEntry';
   }
 }

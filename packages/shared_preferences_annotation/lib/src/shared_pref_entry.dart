@@ -94,3 +94,11 @@ class EnumEntry<T extends Enum> extends EntryGen<T, int> {
     super.defaultValue,
   });
 }
+
+class SerializableEntry<T extends Object> extends EntryGen<T, String> {
+  const SerializableEntry({
+    required super.key,
+    super.accessor,
+    super.defaultValue,
+  });
+}
