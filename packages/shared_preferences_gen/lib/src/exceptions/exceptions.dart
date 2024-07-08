@@ -15,3 +15,18 @@ class NoGenericTypeException implements Exception {
   @override
   String toString() => 'No generic type found on $type object.';
 }
+
+class UnsupportedSharedPrefEntryType implements Exception {
+  const UnsupportedSharedPrefEntryType(this.type);
+
+  final String type;
+
+  @override
+  String toString() {
+    return switch (type) {
+      'DateTime' => 'Unsupported type: $type. Use DateTimeEntry instead.',
+      _ =>
+        'Unsupported type: $type. Use CustomEntry<$type, S> instead with a custom type adapter.',
+    };
+  }
+}

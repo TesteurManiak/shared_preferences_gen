@@ -104,7 +104,8 @@ extension \$SharedPreferencesGenX on SharedPreferences {
         dartType.getDisplayString(withNullability: false).removeGenericTypes();
 
     return switch ((typeName, dartType)) {
-      ('SharedPrefEntry', ParameterizedType(typeArguments: [final typeArg])) =>
+      ('SharedPrefEntry', ParameterizedType(typeArguments: [final typeArg]))
+          when typeArg.isSupportedSharedPrefType =>
         (
           input: typeArg.getDisplayString(withNullability: false),
           output: typeArg.getDisplayString(withNullability: false)
@@ -180,5 +181,12 @@ extension on String {
   String removeGenericTypes() {
     final regex = RegExp(r'<.*>');
     return replaceAll(regex, '');
+  }
+}
+
+extension on DartType {
+  bool get isSupportedSharedPrefType {
+    final typeName = getDisplayString(withNullability: false);
+    return _spBaseTypes.contains(typeName);
   }
 }

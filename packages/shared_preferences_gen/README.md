@@ -63,7 +63,7 @@ dart run build_runner build --delete-conflicting-outputs
 To create a shared preferences entry, first create an annotation `@SharedPrefData` in the file where you want to store your instance of `SharedPreferences`. Then add a `SharedPrefEntry` with its corresponding type, key and default value (optional).
 
 ```dart
-@SharedPrefData([
+@SharedPrefData(entries: [
   SharedPrefEntry<String>(key: 'myKey'),
   SharedPrefEntry<bool>(key: 'darkMode', defaultValue: false),
 ])
