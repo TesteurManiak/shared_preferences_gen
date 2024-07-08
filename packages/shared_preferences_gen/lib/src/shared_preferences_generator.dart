@@ -176,7 +176,6 @@ extension \$SharedPreferencesGenX on SharedPreferences {
   String? _encodeToString(Object? value) {
     return switch (value) {
       null => null,
-      String() => value,
       List() => "[${value.map((e) => _encodeToString(e)).join(', ')}]",
       Set() => "{${value.map((e) => _encodeToString(e)).join(', ')}}",
       Map() =>
