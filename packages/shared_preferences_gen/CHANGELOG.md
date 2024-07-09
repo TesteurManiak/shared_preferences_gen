@@ -1,3 +1,4 @@
-## 0.0.1
+## 0.1.0
 
-* TODO: Describe initial release.
+* Initial release
+* Support for `bool`, `double`, `int`, `String`, `List<String>`, `DateTime`, `enum`, and serializable objects

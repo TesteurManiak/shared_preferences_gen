@@ -1,5 +1,6 @@
 # shared_preferences_gen
 
+[![Pub Version (including pre-releases)](https://img.shields.io/pub/v/shared_preferences_gen?include_prereleases)][pub-package]
 [![melos](https://img.shields.io/badge/maintained%20with-melos-f700ff.svg)](https://github.com/invertase/melos)
 
 Typesafe code generation for Flutter shared_preferences.
@@ -10,32 +11,14 @@ Typesafe code generation for Flutter shared_preferences.
 * Type-safe accessors for shared preferences
 * Support for:
   * `DateTime`
-  * `Enum`
+  * `enum`
   * Serializable objects with `fromJson` constructor and `toJson` method
 
 # How to use
 
 ## Install
 
-**This package is not yet published. Use git dependencies if you want to try it.**
-
-```yaml
-dependencies
-  shared_preferences_annotation:
-    git:
-      url: https://github.com/TesteurManiak/shared_preferences_gen.git
-      ref: main
-      path: packages/shared_preferences_annotation
-
-dev_dependencies:
-  shared_preferences_gen:
-    git:
-      url: https://github.com/TesteurManiak/shared_preferences_gen.git
-      ref: main
-      path: packages/shared_preferences_gen
-```
-
-~~Make sure to add these packages to the project dependencies:~~
+Make sure to add these packages to the project dependencies:
 
 ```sh
 flutter pub add --dev build_runner
@@ -122,6 +105,8 @@ final prefs = await SharedPreferences.getInstance();
 await prefs.myKey.remove();
 ```
 
-## TODO
+## Roadmap
 
-* Support for custom objects
+* Support for custom objects (no ETA)
+
+[pub-package]: https://pub.dev/packages/shared_preferences_gen
