@@ -1,7 +1,7 @@
-part of 'gen_builder.dart';
+part of 'gen_template.dart';
 
-class EnumBuilder extends GenBuilder {
-  const EnumBuilder({
+class EnumTemplate extends GenTemplate {
+  const EnumTemplate({
     required this.enumType,
   });
 

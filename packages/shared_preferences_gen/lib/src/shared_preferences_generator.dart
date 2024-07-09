@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
-import 'package:shared_preferences_gen/src/builders/gen_builder.dart';
 import 'package:shared_preferences_gen/src/exceptions/exceptions.dart';
+import 'package:shared_preferences_gen/src/templates/gen_template.dart';
 import 'package:source_gen/source_gen.dart';
 
 const _annotationsUrl =
@@ -69,18 +69,18 @@ extension \$SharedPreferencesGenX on SharedPreferences {
 
       for (final value in generatedValue) {
         switch (value) {
-          case GetterBuilder():
+          case GetterTemplate():
             getters.add(value.build());
             final added = keys.add(value.key);
             if (!added) throw DuplicateKeyException(value.key);
-          case EnumBuilder():
+          case EnumTemplate():
             converters.add(value.build());
         }
       }
     }
   }
 
-  Iterable<GenBuilder> _generateForAnnotatedElement(
+  Iterable<GenTemplate> _generateForAnnotatedElement(
     Element element,
     ConstantReader annotation,
   ) sync* {
@@ -99,7 +99,7 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       final defaultValue = _parseValue(reader.peek('defaultValue'));
       final adapter = _extractAdapter(dartType, reader);
 
-      yield GetterBuilder(
+      yield GetterTemplate(
         key: key,
         isEnum: dartType.isEnumEntry,
         isSerializable: dartType.isSerializableEntry,
@@ -110,7 +110,7 @@ extension \$SharedPreferencesGenX on SharedPreferences {
         outputType: output,
       );
 
-      if (dartType.isEnumEntry) yield EnumBuilder(enumType: output);
+      if (dartType.isEnumEntry) yield EnumTemplate(enumType: output);
     }
   }
 
@@ -230,9 +230,12 @@ extension on DartType {
     final classElement = element;
     if (classElement is! ClassElement) return false;
 
-    // final hasToJson = classElement.methods
-    //     .firstWhereOrNull((e) => e.name == 'toJson' && e.parameters.isEmpty);
-    // if (hasToJson == null) return false;
+    final hasToJsonMethod =
+        classElement.lookUpMethod('toJson', classElement.library) != null ||
+            classElement.mixins.any((mixin) =>
+                mixin.lookUpMethod2('toJson', classElement.library) != null);
+
+    if (!hasToJsonMethod) return false;
 
     final hasFromJson = classElement.constructors.firstWhereOrNull((e) =>
         e.name == 'fromJson' &&

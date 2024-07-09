@@ -1,7 +1,7 @@
-part of 'gen_builder.dart';
+part of 'gen_template.dart';
 
-class GetterBuilder extends GenBuilder {
-  const GetterBuilder({
+class GetterTemplate extends GenTemplate {
+  const GetterTemplate({
     required this.key,
     required this.isEnum,
     required this.isSerializable,
@@ -61,7 +61,7 @@ class GetterBuilder extends GenBuilder {
   String _buildAdapter() {
     if (adapter == null) return '';
     if (isEnum) {
-      return 'const adapter = ${EnumBuilder.nameGenerator(outputType)};';
+      return 'const adapter = ${EnumTemplate.nameGenerator(outputType)};';
     }
     if (isSerializable) {
       return '''final adapter = SerializableAdapter<$outputType>(

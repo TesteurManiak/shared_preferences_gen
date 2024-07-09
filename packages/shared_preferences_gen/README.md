@@ -40,6 +40,19 @@ flutter pub add --dev shared_preferences_gen
 flutter pub add shared_preferences_annotation
 ```
 
+## Compatibility with `json_serializable`
+
+If you are using `json_serializable`, you need to add the following configuration to your `build.yaml` file:
+
+```yaml
+global_options:
+  json_serializable:
+    runs_before:
+      - shared_preferences_gen
+```
+
+This will ensure that the generated `toJson` and `fromJson` methods are available when analyzing the code.
+
 ## Add imports and part directive
 
 Make sure to specify the correct file name in a part directive. In the example below, replace "name" with the file name.
