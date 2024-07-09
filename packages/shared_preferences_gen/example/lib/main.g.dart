@@ -16,7 +16,7 @@ extension $SharedPreferencesGenX on SharedPreferences {
       getter: getString,
       setter: setString,
       remover: remove,
-      defaultValue: "Hello, World!",
+      defaultValue: 'Hello, World!',
     );
   }
 
@@ -46,7 +46,7 @@ extension $SharedPreferencesGenX on SharedPreferences {
       getter: getStringList,
       setter: setStringList,
       remover: remove,
-      defaultValue: ["0", "1"],
+      defaultValue: ['0', '1'],
     );
   }
 
@@ -71,16 +71,17 @@ extension $SharedPreferencesGenX on SharedPreferences {
     );
   }
 
-  SharedPrefValue<MyModel> get myModel {
+  SharedPrefValueWithDefault<MyModel> get myModel {
     final adapter = SerializableAdapter<MyModel>(
       fromJson: MyModel.fromJson,
       toJson: (v) => v.toJson(),
     );
-    return SharedPrefValue<MyModel>(
+    return SharedPrefValueWithDefault<MyModel>(
       key: 'myModel',
       getter: (k) => adapter.fromSharedPrefs(getString(k)),
       setter: (k, v) => setString(k, adapter.toSharedPrefs(v)),
       remover: remove,
+      defaultValue: _defaultObj,
     );
   }
 }

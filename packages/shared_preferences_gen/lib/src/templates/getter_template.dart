@@ -8,6 +8,7 @@ class GetterTemplate extends GenTemplate {
     required String? accessor,
     required this.adapter,
     required this.defaultValue,
+    required this.defaultValueAsString,
     required this.inputType,
     required this.outputType,
   }) : accessor = accessor ?? key;
@@ -18,6 +19,7 @@ class GetterTemplate extends GenTemplate {
   final String accessor;
   final String? adapter;
   final String? defaultValue;
+  final String? defaultValueAsString;
   final String inputType;
   final String outputType;
 
@@ -36,6 +38,7 @@ class GetterTemplate extends GenTemplate {
   String build() {
     final (getter: spGetter, setter: spSetter) = sharedPrefMethods;
     final hasAdapter = adapter != null;
+    final hasDefault = defaultValue != null || defaultValueAsString != null;
     final (:getter, :setter) = switch (hasAdapter) {
       true => (
           getter: '(k) => adapter.fromSharedPrefs($spGetter(k))',
@@ -44,8 +47,7 @@ class GetterTemplate extends GenTemplate {
       false => (getter: spGetter, setter: spSetter),
     };
 
-    final valueType =
-        'SharedPrefValue${defaultValue != null ? 'WithDefault' : ''}';
+    final valueType = 'SharedPrefValue${hasDefault ? 'WithDefault' : ''}';
 
     return '''
     $valueType<$outputType> get $accessor {
@@ -55,7 +57,7 @@ class GetterTemplate extends GenTemplate {
         getter: $getter,
         setter: $setter,
         remover: remove,
-        ${defaultValue != null ? 'defaultValue: $defaultValue,' : ''}
+        ${hasDefault ? 'defaultValue: ${defaultValue ?? defaultValueAsString},' : ''}
       );
     }
     ''';

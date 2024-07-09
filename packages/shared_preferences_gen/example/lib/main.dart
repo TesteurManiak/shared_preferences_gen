@@ -5,6 +5,8 @@ import 'package:shared_preferences_annotation/shared_preferences_annotation.dart
 
 part 'main.g.dart';
 
+const _defaultObj = MyModel(name: 'John', age: 21);
+
 @SharedPrefData(entries: [
   SharedPrefEntry<String>(key: 'title', defaultValue: 'Hello, World!'),
   SharedPrefEntry<bool>(key: 'darkMode', defaultValue: false),
@@ -12,7 +14,7 @@ part 'main.g.dart';
   SharedPrefEntry<List<String>>(key: 'history', defaultValue: ['0', '1']),
   SharedPrefEntry<DateTime>(key: 'lastVisit'),
   SharedPrefEntry<ThemeMode>(key: 'themeMode', defaultValue: ThemeMode.system),
-  SharedPrefEntry<MyModel>(key: 'myModel'),
+  SharedPrefEntry<MyModel>(key: 'myModel', defaultValueAsString: '_defaultObj'),
 ])
 Future<void> main() async {
   final prefs = await SharedPreferences.getInstance();

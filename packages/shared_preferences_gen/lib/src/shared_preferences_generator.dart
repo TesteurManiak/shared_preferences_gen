@@ -5,6 +5,7 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:shared_preferences_gen/src/exceptions/exceptions.dart';
 import 'package:shared_preferences_gen/src/templates/gen_template.dart';
+import 'package:shared_preferences_gen/src/utils/shared_pref_entry_utils.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:source_helper/source_helper.dart';
 
@@ -95,18 +96,17 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       final (:output, :input) = _extractGenericTypes(dartType!);
 
       // Properties
-      final key = reader.peek('key')!.stringValue;
-      final accessor = reader.peek('accessor')?.stringValue;
-      final defaultValue = _parseValue(reader.peek('defaultValue'));
+      final entryObj = entryForObject(entry);
       final adapter = _extractAdapter(dartType, reader);
 
       yield GetterTemplate(
-        key: key,
+        key: entryObj.key,
         isEnum: dartType.isEnumEntry,
         isSerializable: dartType.isSerializableEntry,
-        accessor: accessor,
+        accessor: entryObj.accessor,
         adapter: adapter,
-        defaultValue: defaultValue,
+        defaultValue: entryObj.defaultValue,
+        defaultValueAsString: entryObj.defaultValueAsString,
         inputType: input,
         outputType: output,
       );
@@ -137,40 +137,6 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       ) =>
         (input: inputType.fullTypeName, output: outputType.fullTypeName),
       _ => throw UnsupportedSharedPrefEntryValueType(dartType.fullTypeName),
-    };
-  }
-
-  String? _parseValue(ConstantReader? reader) {
-    if (reader == null || reader.isNull) return null;
-
-    final value = switch (reader) {
-      _ when reader.isString => '"${reader.stringValue}"',
-      _ when reader.isInt => reader.intValue,
-      _ when reader.isDouble => reader.doubleValue,
-      _ when reader.isBool => reader.boolValue,
-      _ when reader.isList =>
-        reader.listValue.map((e) => _parseValue(ConstantReader(e))).toList(),
-      _ when reader.isSet =>
-        reader.setValue.map((e) => _parseValue(ConstantReader(e))).toSet(),
-      _ when reader.isMap => reader.mapValue.map((k, v) {
-          return MapEntry(
-              _parseValue(ConstantReader(k)), _parseValue(ConstantReader(v)));
-        }),
-      _ when reader.isEnum => reader.enumValue,
-      _ => reader.objectValue,
-    };
-
-    return _encodeToString(value);
-  }
-
-  String? _encodeToString(Object? value) {
-    return switch (value) {
-      null => null,
-      List() => "[${value.map((e) => _encodeToString(e)).join(', ')}]",
-      Set() => "{${value.map((e) => _encodeToString(e)).join(', ')}}",
-      Map() =>
-        "{${value.entries.map((e) => '${_encodeToString(e.key)}: ${_encodeToString(e.value)}').join(', ')}}",
-      _ => value.toString(),
     };
   }
 
@@ -245,19 +211,6 @@ extension on DartType {
 
   String get fullTypeName => getDisplayString(withNullability: true);
   String get typeName => fullTypeName.removeGenericTypes();
-}
-
-extension on ConstantReader {
-  bool get isEnum => objectValue.type?.isEnum ?? false;
-
-  String get enumValue {
-    if (!isEnum) throw Exception('Not an enum value');
-
-    final enumClassName = objectValue.type!.fullTypeName;
-    final enumValueName = objectValue.getField('_name')!.toStringValue();
-
-    return '$enumClassName.$enumValueName';
-  }
 }
 
 extension<T> on Iterable<T> {
