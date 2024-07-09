@@ -8,7 +8,7 @@ part of 'main.dart';
 
 extension $SharedPreferencesGenX on SharedPreferences {
   Set<SharedPrefValue> get entries =>
-      {title, darkMode, numberOfVisits, history, lastVisit, themeMode};
+      {title, darkMode, numberOfVisits, history, lastVisit, themeMode, myModel};
 
   SharedPrefValue<String> get title {
     return SharedPrefValue<String>(
@@ -68,6 +68,19 @@ extension $SharedPreferencesGenX on SharedPreferences {
       setter: (k, v) => setInt(k, adapter.toSharedPrefs(v)),
       remover: remove,
       defaultValue: ThemeMode.system,
+    );
+  }
+
+  SharedPrefValue<MyModel> get myModel {
+    final adapter = SerializableAdapter<MyModel>(
+      fromJson: MyModel.fromJson,
+      toJson: (v) => v.toJson(),
+    );
+    return SharedPrefValue<MyModel>(
+      key: 'myModel',
+      getter: (k) => adapter.fromSharedPrefs(getString(k)),
+      setter: (k, v) => setString(k, adapter.toSharedPrefs(v)),
+      remover: remove,
     );
   }
 }

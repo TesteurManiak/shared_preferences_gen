@@ -30,3 +30,14 @@ class UnsupportedSharedPrefEntryType implements Exception {
     };
   }
 }
+
+class UnsupportedSharedPrefEntryValueType implements Exception {
+  const UnsupportedSharedPrefEntryValueType(this.type);
+
+  final String type;
+
+  @override
+  String toString() {
+    return 'Unsupported value type: $type. Use a supported type instead.';
+  }
+}

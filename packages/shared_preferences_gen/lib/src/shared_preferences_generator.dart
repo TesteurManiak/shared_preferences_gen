@@ -135,7 +135,7 @@ extension \$SharedPreferencesGenX on SharedPreferences {
         ParameterizedType(typeArguments: [final outputType, final inputType])
       ) =>
         (input: inputType.fullTypeName, output: outputType.fullTypeName),
-      _ => throw NoGenericTypeException(typeName),
+      _ => throw UnsupportedSharedPrefEntryValueType(dartType.fullTypeName),
     };
   }
 
@@ -230,9 +230,9 @@ extension on DartType {
     final classElement = element;
     if (classElement is! ClassElement) return false;
 
-    final hasToJson = classElement.methods
-        .firstWhereOrNull((e) => e.name == 'toJson' && e.parameters.isEmpty);
-    if (hasToJson == null) return false;
+    // final hasToJson = classElement.methods
+    //     .firstWhereOrNull((e) => e.name == 'toJson' && e.parameters.isEmpty);
+    // if (hasToJson == null) return false;
 
     final hasFromJson = classElement.constructors.firstWhereOrNull((e) =>
         e.name == 'fromJson' &&

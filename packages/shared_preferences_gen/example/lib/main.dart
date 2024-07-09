@@ -1,3 +1,4 @@
+import 'package:example/my_model.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_annotation/shared_preferences_annotation.dart';
@@ -11,7 +12,7 @@ part 'main.g.dart';
   SharedPrefEntry<List<String>>(key: 'history', defaultValue: ['0', '1']),
   SharedPrefEntry<DateTime>(key: 'lastVisit'),
   SharedPrefEntry<ThemeMode>(key: 'themeMode', defaultValue: ThemeMode.system),
-  // SharedPrefEntry<MyModel>(key: 'myModel'),
+  SharedPrefEntry<MyModel>(key: 'myModel'),
 ])
 Future<void> main() async {
   final prefs = await SharedPreferences.getInstance();
