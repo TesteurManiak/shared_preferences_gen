@@ -6,6 +6,7 @@ import 'package:build/build.dart';
 import 'package:shared_preferences_gen/src/exceptions/exceptions.dart';
 import 'package:shared_preferences_gen/src/templates/gen_template.dart';
 import 'package:source_gen/source_gen.dart';
+import 'package:source_helper/source_helper.dart';
 
 const _annotationsUrl =
     'package:shared_preferences_annotation/src/shared_pref_data.dart';
@@ -220,7 +221,6 @@ extension on DartType {
     };
   }
 
-  bool get isEnum => element?.kind == ElementKind.ENUM;
   bool get isDateTime => fullTypeName == 'DateTime';
 
   bool get isSerializable {
