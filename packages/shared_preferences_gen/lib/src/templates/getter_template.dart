@@ -44,10 +44,13 @@ class GetterTemplate extends GenTemplate {
       false => (getter: spGetter, setter: spSetter),
     };
 
+    final valueType =
+        defaultValue != null ? 'SharedPrefEntryWithDefault' : 'SharedPrefValue';
+
     return '''
-    SharedPrefValue<$outputType> get $accessor {
+    $valueType<$outputType> get $accessor {
       ${_buildAdapter()}
-      return SharedPrefValue<$outputType>(
+      return $valueType<$outputType>(
         key: '$key',
         getter: $getter,
         setter: $setter,

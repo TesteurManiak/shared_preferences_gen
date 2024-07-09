@@ -7,11 +7,11 @@ part of 'main.dart';
 // **************************************************************************
 
 extension $SharedPreferencesGenX on SharedPreferences {
-  Set<SharedPrefValue> get entries =>
+  Set<SharedPrefValueGen> get entries =>
       {title, darkMode, numberOfVisits, history, lastVisit, themeMode, myModel};
 
-  SharedPrefValue<String> get title {
-    return SharedPrefValue<String>(
+  SharedPrefValueWithDefault<String> get title {
+    return SharedPrefValueWithDefault<String>(
       key: 'title',
       getter: getString,
       setter: setString,
@@ -20,8 +20,8 @@ extension $SharedPreferencesGenX on SharedPreferences {
     );
   }
 
-  SharedPrefValue<bool> get darkMode {
-    return SharedPrefValue<bool>(
+  SharedPrefValueWithDefault<bool> get darkMode {
+    return SharedPrefValueWithDefault<bool>(
       key: 'darkMode',
       getter: getBool,
       setter: setBool,
@@ -30,8 +30,8 @@ extension $SharedPreferencesGenX on SharedPreferences {
     );
   }
 
-  SharedPrefValue<int> get numberOfVisits {
-    return SharedPrefValue<int>(
+  SharedPrefValueWithDefault<int> get numberOfVisits {
+    return SharedPrefValueWithDefault<int>(
       key: 'numberOfVisits',
       getter: getInt,
       setter: setInt,
@@ -40,8 +40,8 @@ extension $SharedPreferencesGenX on SharedPreferences {
     );
   }
 
-  SharedPrefValue<List<String>> get history {
-    return SharedPrefValue<List<String>>(
+  SharedPrefValueWithDefault<List<String>> get history {
+    return SharedPrefValueWithDefault<List<String>>(
       key: 'history',
       getter: getStringList,
       setter: setStringList,
@@ -60,9 +60,9 @@ extension $SharedPreferencesGenX on SharedPreferences {
     );
   }
 
-  SharedPrefValue<ThemeMode> get themeMode {
+  SharedPrefValueWithDefault<ThemeMode> get themeMode {
     const adapter = _$ThemeModeConverterType;
-    return SharedPrefValue<ThemeMode>(
+    return SharedPrefValueWithDefault<ThemeMode>(
       key: 'themeMode',
       getter: (k) => adapter.fromSharedPrefs(getInt(k)),
       setter: (k, v) => setInt(k, adapter.toSharedPrefs(v)),
