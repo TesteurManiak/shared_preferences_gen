@@ -45,7 +45,7 @@ class GetterTemplate extends GenTemplate {
     };
 
     final valueType =
-        defaultValue != null ? 'SharedPrefEntryWithDefault' : 'SharedPrefValue';
+        'SharedPrefValue${defaultValue != null ? 'WithDefault' : ''}';
 
     return '''
     $valueType<$outputType> get $accessor {
