@@ -8,7 +8,7 @@ Typesafe code generation for Flutter shared_preferences.
 
 * Check for duplicate keys
 * Type-safe accessors for shared preferences
-* Support for `DateTime` and `Enum`
+* Support for `DateTime`, `Enum` and serializable objects (with `fromJson` constructor and `toJson` method)
 
 # How to use
 
@@ -86,6 +86,7 @@ A `SharedPrefEntry` can be used with any of those types:
 * `List<String>`
 * `DateTime`
 * Any `enum`
+* Any serializable object with a `toJson` method and `fromJson` factory constructor
 
 ```dart
 @SharedPrefData(entries: [
@@ -120,5 +121,4 @@ await prefs.myKey.remove();
 
 ## TODO
 
-* Support for serializable objects
 * Support for custom objects
