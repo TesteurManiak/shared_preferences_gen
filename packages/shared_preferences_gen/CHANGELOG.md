@@ -1,3 +1,7 @@
+## 0.1.0+1
+
+* Longer description in `pubspec.yaml` to increase the score on pub.dev
+
 ## 0.1.0
 
 * Initial release

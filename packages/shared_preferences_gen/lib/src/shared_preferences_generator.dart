@@ -202,10 +202,7 @@ extension on String {
 }
 
 extension on DartType {
-  bool get isSupportedBaseType {
-    final typeName = getDisplayString(withNullability: false);
-    return _spBaseTypes.contains(typeName);
-  }
+  bool get isSupportedBaseType => _spBaseTypes.contains(fullTypeName);
 
   bool get isEnumEntry {
     return switch ((typeName, this)) {
@@ -224,7 +221,7 @@ extension on DartType {
   }
 
   bool get isEnum => element?.kind == ElementKind.ENUM;
-  bool get isDateTime => getDisplayString(withNullability: false) == 'DateTime';
+  bool get isDateTime => fullTypeName == 'DateTime';
 
   bool get isSerializable {
     final classElement = element;
@@ -246,7 +243,7 @@ extension on DartType {
     return hasFromJson != null;
   }
 
-  String get fullTypeName => getDisplayString(withNullability: false);
+  String get fullTypeName => getDisplayString(withNullability: true);
   String get typeName => fullTypeName.removeGenericTypes();
 }
 
@@ -256,8 +253,7 @@ extension on ConstantReader {
   String get enumValue {
     if (!isEnum) throw Exception('Not an enum value');
 
-    final enumClassName =
-        objectValue.type!.getDisplayString(withNullability: false);
+    final enumClassName = objectValue.type!.fullTypeName;
     final enumValueName = objectValue.getField('_name')!.toStringValue();
 
     return '$enumClassName.$enumValueName';

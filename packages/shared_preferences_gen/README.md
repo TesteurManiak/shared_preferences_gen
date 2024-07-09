@@ -3,7 +3,7 @@
 [![Pub Version (including pre-releases)](https://img.shields.io/pub/v/shared_preferences_gen?include_prereleases)][pub-package]
 [![melos](https://img.shields.io/badge/maintained%20with-melos-f700ff.svg)](https://github.com/invertase/melos)
 
-Typesafe code generation for Flutter shared_preferences.
+A code generator that provides strongly-typed accessors for Flutter shared_preferences entries.
 
 ## Features
 
