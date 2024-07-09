@@ -8,7 +8,10 @@ Typesafe code generation for Flutter shared_preferences.
 
 * Check for duplicate keys
 * Type-safe accessors for shared preferences
-* Support for `DateTime`, `Enum` and serializable objects (with `fromJson` constructor and `toJson` method)
+* Support for:
+  * `DateTime`
+  * `Enum`
+  * Serializable objects with `fromJson` constructor and `toJson` method
 
 # How to use
 
