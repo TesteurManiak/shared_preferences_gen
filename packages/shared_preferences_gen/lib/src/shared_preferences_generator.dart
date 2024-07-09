@@ -102,6 +102,7 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       yield GetterBuilder(
         key: key,
         isEnum: dartType.isEnumEntry,
+        isSerializable: dartType.isSerializableEntry,
         accessor: accessor,
         adapter: adapter,
         defaultValue: defaultValue,
@@ -184,6 +185,9 @@ extension \$SharedPreferencesGenX on SharedPreferences {
       ('SharedPrefEntry', ParameterizedType(typeArguments: [final enumType]))
           when enumType.isEnum =>
         'EnumAdapter<$enumType>',
+      ('SharedPrefEntry', ParameterizedType(typeArguments: [final argType]))
+          when argType.isSerializable =>
+        'SerializableAdapter<$argType>',
       _ => null,
     };
   }
@@ -207,6 +211,14 @@ extension on DartType {
     return switch ((typeName, this)) {
       ('SharedPrefEntry', ParameterizedType(typeArguments: [final arg])) =>
         arg.isEnum,
+      _ => false,
+    };
+  }
+
+  bool get isSerializableEntry {
+    return switch ((typeName, this)) {
+      ('SharedPrefEntry', ParameterizedType(typeArguments: [final arg])) =>
+        arg.isSerializable,
       _ => false,
     };
   }

@@ -4,6 +4,7 @@ class GetterBuilder extends GenBuilder {
   const GetterBuilder({
     required this.key,
     required this.isEnum,
+    required this.isSerializable,
     required String? accessor,
     required this.adapter,
     required this.defaultValue,
@@ -13,6 +14,7 @@ class GetterBuilder extends GenBuilder {
 
   final String key;
   final bool isEnum;
+  final bool isSerializable;
   final String accessor;
   final String? adapter;
   final String? defaultValue;
@@ -60,6 +62,12 @@ class GetterBuilder extends GenBuilder {
     if (adapter == null) return '';
     if (isEnum) {
       return 'const adapter = ${EnumBuilder.nameGenerator(outputType)};';
+    }
+    if (isSerializable) {
+      return '''final adapter = SerializableAdapter<$outputType>(
+        fromJson: $outputType.fromJson,
+        toJson: (v) => v.toJson(),
+      );''';
     }
     return 'const adapter = $adapter();';
   }

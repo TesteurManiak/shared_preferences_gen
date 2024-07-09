@@ -19,8 +19,13 @@ class SharedPrefValue<T extends Object> {
   final String key;
   final T? defaultValue;
 
+  /// Decoded value, stored in shared preferences.
   T? get value => _getter(key) ?? defaultValue;
+
+  /// Set value to shared preferences.
   Future<bool> setValue(T value) => _setter(key, value);
+
+  /// Remove value from shared preferences.
   Future<bool> remove() => _remover(key);
 
   @override
