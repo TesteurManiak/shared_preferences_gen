@@ -3,17 +3,15 @@ import 'dart:async';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
+import 'package:shared_preferences_annotation/shared_preferences_annotation.dart';
 import 'package:shared_preferences_gen/src/exceptions/exceptions.dart';
 import 'package:shared_preferences_gen/src/templates/gen_template.dart';
 import 'package:shared_preferences_gen/src/utils/shared_pref_entry_utils.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:source_helper/source_helper.dart';
 
-const _annotationsUrl =
-    'package:shared_preferences_annotation/src/shared_pref_data.dart';
-
-const _annotations = <String>{
-  'SharedPrefData',
+const _annotations = <Type>{
+  SharedPrefData,
 };
 
 const _spBaseTypes = <String>{
@@ -27,8 +25,8 @@ const _spBaseTypes = <String>{
 class SharedPreferencesGenerator extends Generator {
   const SharedPreferencesGenerator();
 
-  TypeChecker get _typeChecker => TypeChecker.any(
-      _annotations.map((e) => TypeChecker.fromUrl('$_annotationsUrl#$e')));
+  TypeChecker get _typeChecker =>
+      TypeChecker.any(_annotations.map((e) => TypeChecker.fromRuntime(e)));
 
   @override
   Future<String> generate(LibraryReader library, BuildStep buildStep) async {
@@ -200,24 +198,13 @@ extension on DartType {
 
     if (!hasToJsonMethod) return false;
 
-    final hasFromJson = classElement.constructors.firstWhereOrNull((e) =>
+    return classElement.constructors.any((e) =>
         e.name == 'fromJson' &&
         e.isFactory &&
         e.parameters.length == 1 &&
         e.parameters.first.type.isDartCoreMap);
-
-    return hasFromJson != null;
   }
 
   String get fullTypeName => getDisplayString(withNullability: true);
   String get typeName => fullTypeName.removeGenericTypes();
-}
-
-extension<T> on Iterable<T> {
-  T? firstWhereOrNull(bool Function(T) test) {
-    for (final element in this) {
-      if (test(element)) return element;
-    }
-    return null;
-  }
 }
