@@ -44,7 +44,7 @@ sealed class EntryGen<T extends Object, S> {
 /// - `String`
 /// - `List<String>`
 /// {@endtemplate}
-class SharedPrefEntry<T extends Object> extends EntryGen<T, T> {
+final class SharedPrefEntry<T extends Object> extends EntryGen<T, T> {
   /// {@macro shared_pref_entry}
   const SharedPrefEntry({
     required super.key,
@@ -60,7 +60,7 @@ class SharedPrefEntry<T extends Object> extends EntryGen<T, T> {
 /// You'll need to provide a custom type adapter to convert the type to a
 /// supported shared preference type.
 /// {@endtemplate}
-class CustomEntry<T extends Object, S> extends EntryGen<T, S> {
+final class CustomEntry<T extends Object, S> extends EntryGen<T, S> {
   /// {@macro custom_entry}
   const CustomEntry({
     required super.key,

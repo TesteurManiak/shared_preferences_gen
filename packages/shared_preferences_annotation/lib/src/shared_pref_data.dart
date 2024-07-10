@@ -4,7 +4,7 @@ import 'package:shared_preferences_annotation/src/shared_pref_entry.dart';
 /// Entrypoint used to specify shared preferences entries that will be
 /// generated.
 /// {@endtemplate}
-class SharedPrefData {
+final class SharedPrefData {
   /// {@macro shared_pref_data}
   const SharedPrefData({required this.entries});
 
