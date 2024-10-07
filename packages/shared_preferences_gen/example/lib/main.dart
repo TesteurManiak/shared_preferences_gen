@@ -18,7 +18,6 @@ const _defaultObj = MyModel(name: 'John', age: 21);
 ])
 Future<void> main() async {
   final prefs = await SharedPreferences.getInstance();
-
   runApp(MainApp(prefs));
 }
 

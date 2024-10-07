@@ -23,8 +23,12 @@ mixin _$MyModel {
   String get name => throw _privateConstructorUsedError;
   int get age => throw _privateConstructorUsedError;
 
+  /// Serializes this MyModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of MyModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $MyModelCopyWith<MyModel> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -46,6 +50,8 @@ class _$MyModelCopyWithImpl<$Res, $Val extends MyModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of MyModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -83,6 +89,8 @@ class __$$MyModelImplCopyWithImpl<$Res>
       _$MyModelImpl _value, $Res Function(_$MyModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of MyModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -129,11 +137,13 @@ class _$MyModelImpl implements _MyModel {
             (identical(other.age, age) || other.age == age));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, name, age);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of MyModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$MyModelImplCopyWith<_$MyModelImpl> get copyWith =>
@@ -157,8 +167,11 @@ abstract class _MyModel implements MyModel {
   String get name;
   @override
   int get age;
+
+  /// Create a copy of MyModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MyModelImplCopyWith<_$MyModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

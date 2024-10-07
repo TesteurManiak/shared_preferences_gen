@@ -7,11 +7,11 @@ part of 'main.dart';
 // **************************************************************************
 
 extension $SharedPreferencesGenX on SharedPreferences {
-  Set<SharedPrefValueGen> get entries =>
+  Set<$SharedPrefValueGen> get entries =>
       {title, darkMode, numberOfVisits, history, lastVisit, themeMode, myModel};
 
-  SharedPrefValueWithDefault<String> get title {
-    return SharedPrefValueWithDefault<String>(
+  $SharedPrefValueWithDefault<String> get title {
+    return $SharedPrefValueWithDefault<String>(
       key: 'title',
       getter: getString,
       setter: setString,
@@ -20,8 +20,8 @@ extension $SharedPreferencesGenX on SharedPreferences {
     );
   }
 
-  SharedPrefValueWithDefault<bool> get darkMode {
-    return SharedPrefValueWithDefault<bool>(
+  $SharedPrefValueWithDefault<bool> get darkMode {
+    return $SharedPrefValueWithDefault<bool>(
       key: 'darkMode',
       getter: getBool,
       setter: setBool,
@@ -30,8 +30,8 @@ extension $SharedPreferencesGenX on SharedPreferences {
     );
   }
 
-  SharedPrefValueWithDefault<int> get numberOfVisits {
-    return SharedPrefValueWithDefault<int>(
+  $SharedPrefValueWithDefault<int> get numberOfVisits {
+    return $SharedPrefValueWithDefault<int>(
       key: 'numberOfVisits',
       getter: getInt,
       setter: setInt,
@@ -40,8 +40,8 @@ extension $SharedPreferencesGenX on SharedPreferences {
     );
   }
 
-  SharedPrefValueWithDefault<List<String>> get history {
-    return SharedPrefValueWithDefault<List<String>>(
+  $SharedPrefValueWithDefault<List<String>> get history {
+    return $SharedPrefValueWithDefault<List<String>>(
       key: 'history',
       getter: getStringList,
       setter: setStringList,
@@ -50,9 +50,9 @@ extension $SharedPreferencesGenX on SharedPreferences {
     );
   }
 
-  SharedPrefValue<DateTime> get lastVisit {
+  $SharedPrefValue<DateTime> get lastVisit {
     const adapter = DateTimeMillisecondAdapter();
-    return SharedPrefValue<DateTime>(
+    return $SharedPrefValue<DateTime>(
       key: 'lastVisit',
       getter: (k) => adapter.fromSharedPrefs(getInt(k)),
       setter: (k, v) => setInt(k, adapter.toSharedPrefs(v)),
@@ -60,9 +60,9 @@ extension $SharedPreferencesGenX on SharedPreferences {
     );
   }
 
-  SharedPrefValueWithDefault<ThemeMode> get themeMode {
+  $SharedPrefValueWithDefault<ThemeMode> get themeMode {
     const adapter = _$ThemeModeConverterType;
-    return SharedPrefValueWithDefault<ThemeMode>(
+    return $SharedPrefValueWithDefault<ThemeMode>(
       key: 'themeMode',
       getter: (k) => adapter.fromSharedPrefs(getInt(k)),
       setter: (k, v) => setInt(k, adapter.toSharedPrefs(v)),
@@ -71,12 +71,12 @@ extension $SharedPreferencesGenX on SharedPreferences {
     );
   }
 
-  SharedPrefValueWithDefault<MyModel> get myModel {
+  $SharedPrefValueWithDefault<MyModel> get myModel {
     final adapter = SerializableAdapter<MyModel>(
       fromJson: MyModel.fromJson,
       toJson: (v) => v.toJson(),
     );
-    return SharedPrefValueWithDefault<MyModel>(
+    return $SharedPrefValueWithDefault<MyModel>(
       key: 'myModel',
       getter: (k) => adapter.fromSharedPrefs(getString(k)),
       setter: (k, v) => setString(k, adapter.toSharedPrefs(v)),

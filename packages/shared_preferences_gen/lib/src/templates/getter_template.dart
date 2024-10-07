@@ -47,7 +47,7 @@ class GetterTemplate extends GenTemplate {
       false => (getter: spGetter, setter: spSetter),
     };
 
-    final valueType = 'SharedPrefValue${hasDefault ? 'WithDefault' : ''}';
+    final valueType = '$spValueClassName${hasDefault ? 'WithDefault' : ''}';
 
     return '''
     $valueType<$outputType> get $accessor {
