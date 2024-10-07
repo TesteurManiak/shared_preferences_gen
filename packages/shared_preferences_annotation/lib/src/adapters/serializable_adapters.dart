@@ -2,11 +2,13 @@ import 'dart:convert';
 
 import 'package:shared_preferences_annotation/src/adapters/type_adapter.dart';
 
+const serializableAdapterClassName = r'$SerializableAdapter';
+
 typedef FromJson<T> = T Function(Map<String, dynamic> json);
 typedef ToJson<T> = Map<String, dynamic> Function(T value);
 
-class SerializableAdapter<T extends Object> extends TypeAdapter<T, String> {
-  const SerializableAdapter({
+class $SerializableAdapter<T extends Object> extends TypeAdapter<T, String> {
+  const $SerializableAdapter({
     required this.fromJson,
     required this.toJson,
   });

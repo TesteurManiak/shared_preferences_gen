@@ -51,7 +51,7 @@ extension $SharedPreferencesGenX on SharedPreferences {
   }
 
   $SharedPrefValue<DateTime> get lastVisit {
-    const adapter = DateTimeMillisecondAdapter();
+    const adapter = $DateTimeMillisecondAdapter();
     return $SharedPrefValue<DateTime>(
       key: 'lastVisit',
       getter: (k) => adapter.fromSharedPrefs(getInt(k)),
@@ -72,7 +72,7 @@ extension $SharedPreferencesGenX on SharedPreferences {
   }
 
   $SharedPrefValueWithDefault<MyModel> get myModel {
-    final adapter = SerializableAdapter<MyModel>(
+    final adapter = $SerializableAdapter<MyModel>(
       fromJson: MyModel.fromJson,
       toJson: (v) => v.toJson(),
     );
@@ -86,4 +86,4 @@ extension $SharedPreferencesGenX on SharedPreferences {
   }
 }
 
-const _$ThemeModeConverterType = EnumIndexAdapter<ThemeMode>(ThemeMode.values);
+const _$ThemeModeConverterType = $EnumIndexAdapter<ThemeMode>(ThemeMode.values);

@@ -146,13 +146,13 @@ extension \$SharedPreferencesGenX on SharedPreferences {
     return switch ((typeName, dartType)) {
       ('SharedPrefEntry', ParameterizedType(typeArguments: [final argType]))
           when argType.isDateTime =>
-        'DateTimeMillisecondAdapter',
+        dateTimeMillisecondAdapterClassName,
       ('SharedPrefEntry', ParameterizedType(typeArguments: [final enumType]))
           when enumType.isEnum =>
-        'EnumAdapter<$enumType>',
+        '$enumIndexAdapterClassName<$enumType>',
       ('SharedPrefEntry', ParameterizedType(typeArguments: [final argType]))
           when argType.isSerializable =>
-        'SerializableAdapter<$argType>',
+        '$serializableAdapterClassName<$argType>',
       _ => null,
     };
   }

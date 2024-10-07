@@ -1,9 +1,9 @@
+const spValueGenClassName = r'$SharedPrefValueGen';
+const spValueClassName = r'$SharedPrefValue';
+
 typedef SharedPrefGetter<T> = T? Function(String key);
 typedef SharedPrefSetter<T> = Future<bool> Function(String key, T value);
 typedef SharedPrefRemover = Future<bool> Function(String key);
-
-const spValueGenClassName = r'$SharedPrefValueGen';
-const spValueClassName = r'$SharedPrefValue';
 
 /// Base class for shared preference entries.
 sealed class $SharedPrefValueGen<T> {

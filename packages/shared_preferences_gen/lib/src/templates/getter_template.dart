@@ -69,7 +69,7 @@ class GetterTemplate extends GenTemplate {
       return 'const adapter = ${EnumTemplate.nameGenerator(outputType)};';
     }
     if (isSerializable) {
-      return '''final adapter = SerializableAdapter<$outputType>(
+      return '''final adapter = $serializableAdapterClassName<$outputType>(
         fromJson: $outputType.fromJson,
         toJson: (v) => v.toJson(),
       );''';

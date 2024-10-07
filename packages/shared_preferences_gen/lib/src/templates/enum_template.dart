@@ -16,7 +16,7 @@ class EnumTemplate extends GenTemplate {
   @override
   String build() {
     return '''
-    const $name = EnumIndexAdapter<$enumType>($enumType.values);
+    const $name = $enumIndexAdapterClassName<$enumType>($enumType.values);
     ''';
   }
 }
