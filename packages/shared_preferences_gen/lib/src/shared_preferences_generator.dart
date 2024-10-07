@@ -191,10 +191,11 @@ extension on DartType {
     final classElement = element;
     if (classElement is! ClassElement) return false;
 
-    final hasToJsonMethod =
-        classElement.lookUpMethod('toJson', classElement.library) != null ||
-            classElement.mixins.any((mixin) =>
-                mixin.lookUpMethod2('toJson', classElement.library) != null);
+    final hasToJsonMethod = classElement.augmented
+                .lookUpMethod(name: 'toJson', library: classElement.library) !=
+            null ||
+        classElement.mixins.any((mixin) =>
+            mixin.lookUpMethod2('toJson', classElement.library) != null);
 
     if (!hasToJsonMethod) return false;
 
@@ -205,6 +206,6 @@ extension on DartType {
         e.parameters.first.type.isDartCoreMap);
   }
 
-  String get fullTypeName => getDisplayString(withNullability: true);
+  String get fullTypeName => getDisplayString();
   String get typeName => fullTypeName.removeGenericTypes();
 }
