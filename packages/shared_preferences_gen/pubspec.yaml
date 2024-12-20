@@ -1,7 +1,7 @@
 name: shared_preferences_gen
 description: "A code generator that provides strongly-typed accessors for
   Flutter shared_preferences entries."
-version: 0.1.1
+version: 0.2.0
 homepage: https://github.com/TesteurManiak/shared_preferences_gen
 repository: https://github.com/TesteurManiak/shared_preferences_gen/tree/main/packages/shared_preferences_gen
 issue_tracker: https://github.com/TesteurManiak/shared_preferences_gen/issues
@@ -22,4 +22,4 @@ dependencies:
 
 dev_dependencies:
   build_test: ^2.2.2
-  lints: ^4.0.0
+  lints: ^5.1.0

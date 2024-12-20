@@ -138,9 +138,9 @@ extension on ExecutableElement {
   String get qualifiedName {
     return switch (this) {
       FunctionElement() => name,
-      MethodElement() => '${enclosingElement.name}.$name',
-      ConstructorElement() when name.isEmpty => '${enclosingElement.name}',
-      ConstructorElement() => '${enclosingElement.name}.$name',
+      MethodElement() => '${enclosingElement3.name}.$name',
+      ConstructorElement() when name.isEmpty => '${enclosingElement3.name}',
+      ConstructorElement() => '${enclosingElement3.name}.$name',
       _ => throw UnsupportedError(
           'Not sure how to support typeof $runtimeType',
         ),

@@ -1,5 +1,3 @@
-library shared_preferences_gen;
-
 import 'package:build/build.dart';
 import 'package:shared_preferences_gen/src/shared_preferences_generator.dart';
 import 'package:source_gen/source_gen.dart';
