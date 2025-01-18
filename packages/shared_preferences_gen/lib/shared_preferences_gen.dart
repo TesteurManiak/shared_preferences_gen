@@ -7,8 +7,13 @@ import 'package:source_gen/source_gen.dart';
 ///
 /// Not meant to be invoked by hand-authored code.
 Builder sharedPreferencesGen(BuilderOptions options) {
-  return SharedPartBuilder(
-    const <Generator>[SharedPreferencesGenerator()],
-    'shared_preferences_gen',
-  );
+  return SharedPrefsGenBuilder();
+}
+
+class SharedPrefsGenBuilder extends SharedPartBuilder {
+  SharedPrefsGenBuilder()
+      : super(
+          const <Generator>[SharedPreferencesGenerator()],
+          'shared_preferences_gen',
+        );
 }
