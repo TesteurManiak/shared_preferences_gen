@@ -1,5 +1,5 @@
 import 'package:analyzer/dart/constant/value.dart';
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:shared_preferences_gen/src/type_helpers/config_types.dart';
 import 'package:shared_preferences_gen/src/utils/parsing_utils.dart';
@@ -30,7 +30,7 @@ SpEntryConfig _from(DartObject obj) {
     } else if (dartObject.type is FunctionType) {
       badType = 'Function';
     } else if (!reader.isLiteral) {
-      badType = dartObject.type?.element3?.name3;
+      badType = dartObject.type?.element?.name;
     }
 
     if (badType != null) {
@@ -47,30 +47,19 @@ SpEntryConfig _from(DartObject obj) {
     if (reader.isList) {
       return [
         for (final e in reader.listValue)
-          literalForObject(
-            fieldName,
-            e,
-            [...typeInformation, 'List'],
-          ),
+          literalForObject(fieldName, e, [...typeInformation, 'List']),
       ];
     }
 
     if (reader.isSet) {
       return {
         for (final e in reader.setValue)
-          literalForObject(
-            fieldName,
-            e,
-            [...typeInformation, 'Set'],
-          ),
+          literalForObject(fieldName, e, [...typeInformation, 'Set']),
       };
     }
 
     if (reader.isMap) {
-      final mapTypeInformation = [
-        ...typeInformation,
-        'Map',
-      ];
+      final mapTypeInformation = [...typeInformation, 'Map'];
       return reader.mapValue.map(
         (k, v) => MapEntry(
           literalForObject(fieldName, k!, mapTypeInformation),
@@ -100,22 +89,26 @@ SpEntryConfig _from(DartObject obj) {
     final type = objectValue.type!;
 
     if (type is FunctionType) {
-      final functionValue = objectValue.toFunctionValue2()!;
+      final functionValue = objectValue.toFunctionValue()!;
       final invokeConst =
-          functionValue is ConstructorElement2 && functionValue.isConst
-              ? 'const '
-              : '';
+          functionValue is ConstructorElement && functionValue.isConst
+          ? 'const '
+          : '';
       return '$invokeConst${functionValue.qualifiedName}()';
     }
 
     final enumFields = iterateEnumFields(type);
 
     if (enumFields != null) {
-      final enumValueNames =
-          enumFields.map((e) => e.name3).nonNulls.toList(growable: false);
-      final enumValueName =
-          enumValueForDartObject<String>(objectValue, enumValueNames);
-      return '${type.element3!.name3!}.$enumValueName';
+      final enumValueNames = enumFields
+          .map((e) => e.name)
+          .nonNulls
+          .toList(growable: false);
+      final enumValueName = enumValueForDartObject<String>(
+        objectValue,
+        enumValueNames,
+      );
+      return '${type.element!.name!}.$enumValueName';
     } else {
       final defaultValueLiteral = literalForObject(fieldName, objectValue, []);
       if (defaultValueLiteral == null) return null;
@@ -134,25 +127,42 @@ SpEntryConfig _from(DartObject obj) {
   );
 }
 
-extension on ExecutableElement2 {
+extension on ExecutableElement {
   String get qualifiedName {
     return switch (this) {
-      TopLevelFunctionElement(:final name3?) => name3,
-      LocalFunctionElement(:final name3?) => name3,
-      MethodElement2() => '${enclosingElement2?.name3}.$name3',
-      ConstructorElement2(name3: final name?) when name.isEmpty =>
-        '${enclosingElement2?.name3}',
-      ConstructorElement2() => '${enclosingElement2?.name3}.$name3',
+      TopLevelFunctionElement(:final name?) => name,
+      LocalFunctionElement(:final name?) => name,
+      MethodElement(
+        :final name?,
+        enclosingElement: Element(name: final enclosingElementName?),
+      ) =>
+        '$enclosingElementName.$name',
+      ConstructorElement(
+        :final name?,
+        enclosingElement: Element(name: final enclosingElementName?),
+      )
+          when name.isEmpty =>
+        enclosingElementName,
+      ConstructorElement(
+        :final name?,
+        enclosingElement: Element(name: final enclosingElementName?),
+      ) =>
+        '$enclosingElementName.$name',
       _ => throw UnsupportedError(
-          'Not sure how to support typeof $runtimeType',
-        ),
+        'Not sure how to support typeof $runtimeType',
+      ),
     };
   }
 }
 
-T enumValueForDartObject<T>(
-  DartObject source,
-  List<T> items,
-) {
-  return items[source.getField('index')!.toIntValue()!];
+T enumValueForDartObject<T>(DartObject source, List<T> items) {
+  final field = source.getField('index');
+  if (field == null) {
+    throw Exception('The provided DartObject is not an enum value.');
+  }
+  final index = field.toIntValue();
+  if (index == null || index < 0 || index >= items.length) {
+    throw Exception('The provided DartObject is not an enum value.');
+  }
+  return items[index];
 }

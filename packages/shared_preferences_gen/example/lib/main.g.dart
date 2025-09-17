@@ -7,8 +7,15 @@ part of 'main.dart';
 // **************************************************************************
 
 extension $SharedPreferencesGenX on SharedPreferences {
-  Set<$SharedPrefValueGen> get entries =>
-      {title, darkMode, numberOfVisits, history, lastVisit, themeMode, myModel};
+  Set<$SharedPrefValueGen> get entries => {
+    title,
+    darkMode,
+    numberOfVisits,
+    history,
+    lastVisit,
+    themeMode,
+    myModel,
+  };
 
   $SharedPrefValueWithDefault<String> get title {
     return $SharedPrefValueWithDefault<String>(

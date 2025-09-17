@@ -1,10 +1,10 @@
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:source_helper/source_helper.dart';
 
-Iterable<FieldElement2>? iterateEnumFields(DartType targetType) {
-  if (targetType is InterfaceType && targetType.element3 is EnumElement2) {
-    return targetType.element3.fields2.where((e) => e.isEnumConstant);
+Iterable<FieldElement>? iterateEnumFields(DartType targetType) {
+  if (targetType is InterfaceType && targetType.element is EnumElement) {
+    return targetType.element.fields.where((e) => e.isEnumConstant);
   }
   return null;
 }

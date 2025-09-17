@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:shared_preferences_annotation/shared_preferences_annotation.dart';
@@ -10,9 +10,7 @@ import 'package:shared_preferences_gen/src/utils/shared_pref_entry_utils.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:source_helper/source_helper.dart';
 
-const _annotations = <Type>{
-  SharedPrefData,
-};
+const _annotations = <Type>{SharedPrefData};
 
 const _spBaseTypes = <String>{
   'String',
@@ -25,8 +23,12 @@ const _spBaseTypes = <String>{
 class SharedPreferencesGenerator extends Generator {
   const SharedPreferencesGenerator();
 
-  TypeChecker get _typeChecker =>
-      TypeChecker.any(_annotations.map((e) => TypeChecker.fromRuntime(e)));
+  TypeChecker get _typeChecker => TypeChecker.any(
+    _annotations.map(
+      (e) =>
+          TypeChecker.typeNamed(e, inPackage: 'shared_preferences_annotation'),
+    ),
+  );
 
   @override
   Future<String> generate(LibraryReader library, BuildStep buildStep) async {
@@ -62,8 +64,9 @@ extension \$SharedPreferencesGenX on SharedPreferences {
     required Set<String> keys,
   }) {
     for (final annotatedElement in library.annotatedWith(_typeChecker)) {
-      final generatedValue =
-          _generateForAnnotatedElement(annotatedElement.annotation);
+      final generatedValue = _generateForAnnotatedElement(
+        annotatedElement.annotation,
+      );
 
       for (final value in generatedValue) {
         switch (value) {
@@ -79,7 +82,8 @@ extension \$SharedPreferencesGenX on SharedPreferences {
   }
 
   Iterable<GenTemplate> _generateForAnnotatedElement(
-      ConstantReader annotation) sync* {
+    ConstantReader annotation,
+  ) sync* {
     final entries = annotation.peek('entries')?.listValue ?? [];
 
     for (final entry in entries) {
@@ -127,7 +131,7 @@ extension \$SharedPreferencesGenX on SharedPreferences {
         (input: 'String', output: typeArg.fullTypeName),
       (
         'CustomEntry',
-        ParameterizedType(typeArguments: [final outputType, final inputType])
+        ParameterizedType(typeArguments: [final outputType, final inputType]),
       ) =>
         (input: inputType.fullTypeName, output: outputType.fullTypeName),
       _ => throw UnsupportedSharedPrefEntryValueType(dartType.fullTypeName),
@@ -184,20 +188,27 @@ extension on DartType {
   bool get isDateTime => fullTypeName == 'DateTime';
 
   bool get isSerializable {
-    if (element3 case final ClassElement2 classElement) {
-      final hasToJsonMethod = classElement.methods2.any((method) =>
-              method.name3 == 'toJson' &&
-              method.library2 == classElement.library2) ||
-          classElement.mixins.any((mixin) =>
-              mixin.lookUpMethod3('toJson', classElement.library2) != null);
+    if (element case final ClassElement classElement) {
+      final hasToJsonMethod =
+          classElement.lookUpMethod(
+                name: 'toJson',
+                library: classElement.library,
+              ) !=
+              null ||
+          classElement.mixins.any(
+            (mixin) =>
+                mixin.lookUpMethod('toJson', classElement.library) != null,
+          );
 
       if (!hasToJsonMethod) return false;
 
-      return classElement.constructors2.any((e) =>
-          e.name3 == 'fromJson' &&
-          e.isFactory &&
-          e.formalParameters.length == 1 &&
-          e.formalParameters.first.type.isDartCoreMap);
+      return classElement.constructors.any(
+        (e) =>
+            e.name == 'fromJson' &&
+            e.isFactory &&
+            e.formalParameters.length == 1 &&
+            e.formalParameters.first.type.isDartCoreMap,
+      );
     }
 
     return false;
