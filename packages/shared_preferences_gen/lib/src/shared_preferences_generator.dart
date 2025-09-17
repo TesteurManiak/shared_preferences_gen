@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
@@ -63,10 +62,8 @@ extension \$SharedPreferencesGenX on SharedPreferences {
     required Set<String> keys,
   }) {
     for (final annotatedElement in library.annotatedWith(_typeChecker)) {
-      final generatedValue = _generateForAnnotatedElement(
-        annotatedElement.element,
-        annotatedElement.annotation,
-      );
+      final generatedValue =
+          _generateForAnnotatedElement(annotatedElement.annotation);
 
       for (final value in generatedValue) {
         switch (value) {
@@ -82,9 +79,7 @@ extension \$SharedPreferencesGenX on SharedPreferences {
   }
 
   Iterable<GenTemplate> _generateForAnnotatedElement(
-    Element element,
-    ConstantReader annotation,
-  ) sync* {
+      ConstantReader annotation) sync* {
     final entries = annotation.peek('entries')?.listValue ?? [];
 
     for (final entry in entries) {
