@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:shared_preferences_annotation/shared_preferences_annotation.dart';
@@ -188,22 +189,23 @@ extension on DartType {
   bool get isDateTime => fullTypeName == 'DateTime';
 
   bool get isSerializable {
-    final classElement = element;
-    if (classElement is! ClassElement) return false;
+    if (element3 case final ClassElement2 classElement) {
+      final hasToJsonMethod = classElement.methods2.any((method) =>
+              method.name3 == 'toJson' &&
+              method.library2 == classElement.library2) ||
+          classElement.mixins.any((mixin) =>
+              mixin.lookUpMethod3('toJson', classElement.library2) != null);
 
-    final hasToJsonMethod = classElement.augmented
-                .lookUpMethod(name: 'toJson', library: classElement.library) !=
-            null ||
-        classElement.mixins.any((mixin) =>
-            mixin.lookUpMethod2('toJson', classElement.library) != null);
+      if (!hasToJsonMethod) return false;
 
-    if (!hasToJsonMethod) return false;
+      return classElement.constructors2.any((e) =>
+          e.name3 == 'fromJson' &&
+          e.isFactory &&
+          e.formalParameters.length == 1 &&
+          e.formalParameters.first.type.isDartCoreMap);
+    }
 
-    return classElement.constructors.any((e) =>
-        e.name == 'fromJson' &&
-        e.isFactory &&
-        e.parameters.length == 1 &&
-        e.parameters.first.type.isDartCoreMap);
+    return false;
   }
 
   String get fullTypeName => getDisplayString();

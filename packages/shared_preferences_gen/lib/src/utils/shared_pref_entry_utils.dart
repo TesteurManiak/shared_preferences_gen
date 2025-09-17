@@ -1,5 +1,5 @@
 import 'package:analyzer/dart/constant/value.dart';
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:shared_preferences_gen/src/type_helpers/config_types.dart';
 import 'package:shared_preferences_gen/src/utils/parsing_utils.dart';
@@ -30,7 +30,7 @@ SpEntryConfig _from(DartObject obj) {
     } else if (dartObject.type is FunctionType) {
       badType = 'Function';
     } else if (!reader.isLiteral) {
-      badType = dartObject.type!.element?.name;
+      badType = dartObject.type?.element3?.name3;
     }
 
     if (badType != null) {
@@ -100,9 +100,9 @@ SpEntryConfig _from(DartObject obj) {
     final type = objectValue.type!;
 
     if (type is FunctionType) {
-      final functionValue = objectValue.toFunctionValue()!;
+      final functionValue = objectValue.toFunctionValue2()!;
       final invokeConst =
-          functionValue is ConstructorElement && functionValue.isConst
+          functionValue is ConstructorElement2 && functionValue.isConst
               ? 'const '
               : '';
       return '$invokeConst${functionValue.qualifiedName}()';
@@ -112,10 +112,10 @@ SpEntryConfig _from(DartObject obj) {
 
     if (enumFields != null) {
       final enumValueNames =
-          enumFields.map((e) => e.name).toList(growable: false);
+          enumFields.map((e) => e.name3).nonNulls.toList(growable: false);
       final enumValueName =
           enumValueForDartObject<String>(objectValue, enumValueNames);
-      return '${type.element!.name}.$enumValueName';
+      return '${type.element3!.name3!}.$enumValueName';
     } else {
       final defaultValueLiteral = literalForObject(fieldName, objectValue, []);
       if (defaultValueLiteral == null) return null;
@@ -134,13 +134,15 @@ SpEntryConfig _from(DartObject obj) {
   );
 }
 
-extension on ExecutableElement {
+extension on ExecutableElement2 {
   String get qualifiedName {
     return switch (this) {
-      FunctionElement() => name,
-      MethodElement() => '${enclosingElement3.name}.$name',
-      ConstructorElement() when name.isEmpty => '${enclosingElement3.name}',
-      ConstructorElement() => '${enclosingElement3.name}.$name',
+      TopLevelFunctionElement(:final name3?) => name3,
+      LocalFunctionElement(:final name3?) => name3,
+      MethodElement2() => '${enclosingElement2?.name3}.$name3',
+      ConstructorElement2(name3: final name?) when name.isEmpty =>
+        '${enclosingElement2?.name3}',
+      ConstructorElement2() => '${enclosingElement2?.name3}.$name3',
       _ => throw UnsupportedError(
           'Not sure how to support typeof $runtimeType',
         ),
